@@ -1,8 +1,9 @@
 import re
+import time
 
 import requests
-
-from main.models import Town, BlockAddress, FlatType, LevelType
+from django.core.management.base import BaseCommand
+from main.models import Town, BlockAddress, FlatType, LevelType, Room
 from main.utils.OneMapAPI import OneMapAPI
 
 
@@ -48,7 +49,7 @@ class APIManager:
         self.full_data = full_data
         return full_data
 
-    def import_to_database(self):
+    def full_import_to_database(self):
         if not self.full_data:
             return False
 
@@ -65,39 +66,67 @@ class APIManager:
         for room in self.full_data:
             # Process town data
             town = room['town']
-            town_obj, created = Town.objects.get_or_create(
-                name=town
-            )
+
+            town_obj = Town.objects.filter(name=town)
+            if not town_obj:
+                town_obj = Town.objects.create(name=town)
+            else:
+                town_obj = town_obj[0]
 
             # Process address data
             block = room['block']
             street_name = room['street_name']
 
-            block_obj, created = BlockAddress.objects.get_or_create(
+            block_obj = BlockAddress.objects.filter(
                 block=block,
                 street_name=street_name,
-                town_name_id=town_obj,
             )
 
-            # Coord data is only queried when new block address is created.
-            if created:
+            if not block_obj:
                 coord = one_map.get_coordinates(block + " " + street_name)
-                latitude = coord['lat']
-                longitude = coord['long']
-                block_obj.latitude = latitude
-                block_obj.longitude = longitude
-                block_obj.save()
+                if coord:
+                    latitude = coord['lat']
+                    longitude = coord['long']
+                else:
+                    latitude = None
+                    longitude = None
+
+                block_obj = BlockAddress.objects.create(
+                    block=block,
+                    street_name=street_name,
+                    town_name=town_obj,
+                    latitude=latitude,
+                    longitude=longitude,
+                )
+            else:
+                block_obj = block_obj[0]
+                if not block_obj.latitude or block_obj.longitude:
+                    coord = one_map.get_coordinates(block + " " + street_name)
+                    if coord:
+                        latitude = coord['lat']
+                        longitude = coord['long']
+                    else:
+                        latitude = None
+                        longitude = None
+
+                    block_obj.latitude = latitude
+                    block_obj.longitude = longitude
 
             # Process flat type
             flat_type = room['flat_type']
-            flat_type_obj, created = FlatType.objects.get_or_create(
-                name=flat_type,
-            )
+
+            flat_type_obj = FlatType.objects.filter(name=flat_type)
+            if not flat_type_obj:
+                flat_type_obj = FlatType.objects.create(
+                    name=flat_type
+                )
+            else:
+                flat_type_obj = flat_type_obj[0]
 
             # Process level
-            level = room['level']
+            level = room['storey_range']
             try:
-                level = level_options['level']
+                level = level_options[level]
             except KeyError:
                 level = re.search(r'\d+', level).group()
                 if level:
@@ -109,13 +138,26 @@ class APIManager:
                 else:
                     level = level_options['undefined']
 
-            level_type_obj, created = LevelType.objects.get_or_create(
-                storey_range=level,
-            )
+            level_type_obj = LevelType.objects.filter(storey_range=level)
+            if not level_type_obj:
+                level_type_obj = LevelType.objects.create(storey_range=level)
+            else:
+                level_type_obj = level_type_obj[0]
 
+            # Process Room data
+            price = int(room['resale_price'])
+            lease = room['remaining_lease']
+            area = room['floor_area_sqm']
+            room_id = room['_id']
+            room_obj = Room.objects.filter(id=room_id)
 
-            # 1 - 3 Very Low
-            # 4 - 6 Low
-            # 7 - 9 Intermediate
-            # 10 - 12 High
-            # Higher than 13 Very High
+            if not room_obj:
+                room_obj = Room.objects.create(
+                    id=room_id,
+                    flat_type=flat_type_obj,
+                    level_type=level_type_obj,
+                    block_address=block_obj,
+                    resale_prices=price,
+                    remaining_lease=lease,
+                    area=area,
+                )

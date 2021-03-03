@@ -9,7 +9,8 @@ class OneMapAPI:
             raise Exception("Unable to initiate OneMapAPI, API Server down.")
 
     def test_connection(self):
-        connection = requests.get(self.base_url)
+        payload = {"searchVal": 'Singapore', "returnGeom": "Y", "getAddrDetails": "N"}
+        connection = requests.get(self.base_url, params=payload)
         if connection.status_code == 200:
             return True
         else:
@@ -32,3 +33,5 @@ class OneMapAPI:
             return {"lat": lat, "long": long}
         else:
             return None
+
+one_map = OneMapAPI()
