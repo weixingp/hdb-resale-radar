@@ -29,4 +29,4 @@ class Room(models.Model):
     block_address = models.ForeignKey(BlockAddress, on_delete=models.CASCADE)
     resale_prices = models.IntegerField()
     remaining_lease = models.CharField(max_length=255)
-    area = models.IntegerField()
+    area = models.FloatField()
