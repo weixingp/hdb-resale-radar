@@ -27,6 +27,6 @@ class Room(models.Model):
     flat_type = models.ForeignKey(FlatType, on_delete=models.CASCADE)
     level_type = models.ForeignKey(LevelType, on_delete=models.CASCADE)
     block_address = models.ForeignKey(BlockAddress, on_delete=models.CASCADE)
-    resale_prices = models.IntegerField()
+    resale_prices = models.FloatField()
     remaining_lease = models.CharField(max_length=255)
     area = models.FloatField()
