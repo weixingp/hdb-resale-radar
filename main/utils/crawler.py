@@ -11,21 +11,21 @@ def getdata(url):
     r = requests.get(url)
     return r.text
 
-URL = 'https://mothership.sg/2021/03/tempered-glass-kitchen-shatter/'
+URL = 'https://mothership.sg/2021/03/environmental-control-coordinator-sanitation-regime/' #insert url here
 page = requests.get(URL)
 soup = BeautifulSoup(page.text, 'html.parser')
 
 
-for item2 in soup.find_all('figure', class_='featured-image'):
+for item2 in soup.find_all('figure', class_='featured-image'): #for image
     image = item2.img['src']
     print(image)
 
 empty_list = []
 
-for item2 in soup.find_all('title'):
+for item2 in soup.find_all('title'): #for title
     print(item2.string)
 
-for item2 in soup.find_all('p'):
+for item2 in soup.find_all('p'): #for summary
     if item2.string is not None:
         if len(item2.string) > 100:
             y = item2.string.split()[:]
