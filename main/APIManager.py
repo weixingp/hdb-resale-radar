@@ -8,7 +8,7 @@ from main.utils.OneMapAPI import OneMapAPI
 
 
 class APIManager:
-    resource_id = '42ff9cfe-abe5-4b54-beda-c88f9bb438ee'  # Resale HDB data
+    resource_id = '42ff9cfe-abe5-4b54-beda-c88f9bb438ee'  # Resale HDB data ID
     base_url = "https://data.gov.sg/api/action/datastore_search"  # SG Gov Data API
 
     def __init__(self):

@@ -33,5 +33,3 @@ class OneMapAPI:
             return {"lat": lat, "long": long}
         else:
             return None
-
-one_map = OneMapAPI()
