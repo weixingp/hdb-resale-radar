@@ -83,7 +83,11 @@ class APIManager:
             )
 
             if not block_obj:
-                coord = one_map.get_coordinates(block + " " + street_name)
+                try:
+                    coord = one_map.get_coordinates(block + " " + street_name)
+                except Exception as e:
+                    coord = None
+
                 if coord:
                     latitude = coord['lat']
                     longitude = coord['long']
@@ -145,7 +149,7 @@ class APIManager:
                 level_type_obj = level_type_obj[0]
 
             # Process Room data
-            price = int(room['resale_price'])
+            price = float(room['resale_price'])
             lease = room['remaining_lease']
             area = room['floor_area_sqm']
             room_id = room['_id']
