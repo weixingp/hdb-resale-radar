@@ -8,6 +8,6 @@ from main.APIManager import APIManager
 def test(request):
     api = APIManager()
     api.load_data()
-    api.full_import_to_database()
+    api.import_to_database()
 
     return JsonResponse({"success": True})

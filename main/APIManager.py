@@ -2,6 +2,7 @@ import re
 import time
 
 import requests
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from main.models import Town, BlockAddress, FlatType, LevelType, Room
 from main.utils.OneMapAPI import OneMapAPI
@@ -26,7 +27,8 @@ class APIManager:
         else:
             return False
 
-    def load_data(self):
+    def load_data(self, order="asc"):
+        print("Loading data from data.gov.sg...")
         full_data = []
         total = requests.get(
             self.base_url,
@@ -35,8 +37,14 @@ class APIManager:
 
         limit = 10000
         offset = 0
+
         while offset < total:
-            payload = {'resource_id': self.resource_id, 'limit': limit, 'offset': offset}
+            payload = {
+                'resource_id': self.resource_id,
+                'limit': limit,
+                'offset': offset,
+                'sort': "_id " + order
+            }
             resp = requests.get(self.base_url, params=payload)
             data = resp.json()
             if data['success']:
@@ -49,7 +57,7 @@ class APIManager:
         self.full_data = full_data
         return full_data
 
-    def full_import_to_database(self):
+    def import_to_database(self, update=False, print_output=False):
         if not self.full_data:
             return False
 
@@ -62,8 +70,28 @@ class APIManager:
             'others': 'Very High',
             'undefined': 'Undefined'
         }
+        count = 0
+        if update:
+            try:
+                last_id = Room.objects.latest('id').id
+            except ObjectDoesNotExist:
+                last_id = 0
+            total = int(self.full_data[0]["_id"]) - last_id
+
+            if total == 0 and print_output:
+                print("Nothing to update, exiting...")
+        else:
+            total = len(self.full_data)
+            last_id = 0
 
         for room in self.full_data:
+            if room["_id"] == last_id:
+                break
+            count += 1
+
+            if print_output:
+                print(f"Processing {count} / {total}")
+
             # Process town data
             town = room['town']
 
