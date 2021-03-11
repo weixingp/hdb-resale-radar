@@ -1,9 +1,7 @@
 import re
-import time
 
 import requests
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.management.base import BaseCommand
 from main.models import Town, BlockAddress, FlatType, LevelType, Room
 from main.utils.OneMapAPI import OneMapAPI
 
