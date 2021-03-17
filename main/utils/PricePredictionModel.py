@@ -161,3 +161,5 @@ class PricePredictionModel:
         result_random_forest = list(le.inverse_transform(random_forest_result)).pop()
 
         return result_decision_tree, result_random_forest
+
+
