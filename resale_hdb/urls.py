@@ -19,5 +19,7 @@ from main import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('test', views.test)
+    path('test', views.test),
+    path('map/markers', views.map_markers_json),
+    path('map', views.map)
 ]
