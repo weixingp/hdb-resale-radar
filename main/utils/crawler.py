@@ -2,74 +2,99 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 from itertools import chain
-import json
+
 import requests
-from urllib import request
 from bs4 import BeautifulSoup
+import re
+import csv
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver import ActionChains
+import time
+
+# code needed to run selenium, browser path is specific to where u save chromediver
+browser=webdriver.Chrome(executable_path="c:\\chromedriver.exe")
+url = "https://mothership.sg/search/?s=resale+flat"
+browser.get(url)
+page_number = 1
+urls = []
 
 
 def getdata(url):
     r = requests.get(url)
     return r.text
 
-# function needed to deal with nested dictionary of json
-def findkeys(node, kv):
-    if isinstance(node, list):
-        for i in node:
-            for x in findkeys(i, kv):
-                yield x
-    elif isinstance(node, dict):
-        if kv in node:
-            yield node[kv]
-        for j in node.values():
-            for x in findkeys(j, kv):
-                yield x
+#code to press the button load more results for mothership
+while True:
+    #try block helps to click the load more results, page number is set to prevent errors where load more results keeps going
+    try:
+        button = browser.find_element_by_css_selector("#load-more")
+        button.click()
+        time.sleep(2)
+        page_number +=1
+        if page_number == 9 :
+            break
 
-#loads the url, puts into beautiful soup and turns into a json dictionary
+    #error checking so that no error occurs
+    except NoSuchElementException:
+        break
 
-urlList = ['https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDuQi378YmI9zlQYBgTNV9ZH50GsiXBXsI&cx=007628173177510673425%3A1wke5kj-ez8&q=allintitle%3A%20hdb&num=10&start=0',
-           'https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDuQi378YmI9zlQYBgTNV9ZH50GsiXBXsI&cx=007628173177510673425%3A1wke5kj-ez8&q=allintitle%3A%20hdb&num=10&start=22',
-           'https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDuQi378YmI9zlQYBgTNV9ZH50GsiXBXsI&cx=007628173177510673425%3A1wke5kj-ez8&q=allintitle%3A%20hdb&num=10&start=44',
-           'https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDuQi378YmI9zlQYBgTNV9ZH50GsiXBXsI&cx=007628173177510673425%3A1wke5kj-ez8&q=allintitle%3A%20hdb&num=10&start=55',
-           'https://www.googleapis.com/customsearch/v1/siterestrict?key=AIzaSyDuQi378YmI9zlQYBgTNV9ZH50GsiXBXsI&cx=007628173177510673425%3A1wke5kj-ez8&q=allintitle%3A%20hdb&num=10&start=77']
+#code to print out the urls after loading more results
+css_counter = 1
+while True :
+    try:
+        css = "#search-results > div:nth-child(" +str(css_counter)+") > div.ind-article > div > div.header > h1 > a"
+        css_counter += 1
+        links = browser.find_element_by_css_selector(css)
+        urls.append(links.get_attribute('href'))
 
-k = 0
-urls = []
+    #error checking to prevent selenium error
+    except NoSuchElementException:
+        break
 
-for i in urlList:
-    html = request.urlopen(urlList[k]).read()
-    soup = BeautifulSoup(html, 'html.parser')
-    site_json = json.loads(soup.text)
-    urls.append(list(findkeys(site_json, 'link')))
-    k += 1
+
+
+
+#converts the selenium into a soup obj
+#innerHTML = button.execute_script("return document.body.innerHTML")
+# web_soup = BeautifulSoup(browser, "html.parser")
+#
+# # code used ot scrape out the urls
+# for x in web_soup.findAll('div',{"class": "header"}):
+#     link = x.find('a',href=True)
+#     if link is None:
+#         continue
+#     print(link['href'])
+
+
+browser.close()
 
 j = 0
 
 for i in urls:
-    l = 0
-    for m in urls[j]:
-        URL = urls[j][l]
-        page = requests.get(URL)
-        soup = BeautifulSoup(page.text, 'html.parser')
+    URL = urls[j]
+    page = requests.get(URL)
+    soup = BeautifulSoup(page.text, 'html.parser')
 
-        for item2 in soup.find_all('figure', class_='featured-image'): #for image
-            image = item2.img['src']
-            print(image)
 
-        empty_list = []
+    for item2 in soup.find_all('figure', class_='featured-image'):
+        image = item2.img['src']
+        print(image)
 
-        for item2 in soup.find_all('title'): #for title
-            print(item2.string)
+    empty_list = []
 
-        for item2 in soup.find_all('p'): #for summary
-            if item2.string is not None:
-                if len(item2.string) > 100:
-                    y = item2.string.split()[:]
-                    empty_list.append(y)
+    for item2 in soup.find_all('title'):
+        print(item2.string)
 
-        final = list(chain.from_iterable(empty_list))
-        final = final[:100]
-        print(' '.join(final) + "...")
-        print()
-        l += 1
+    for item2 in soup.find_all('p'):
+        if item2.string is not None:
+            if len(item2.string) > 100:
+                y = item2.string.split()[:]
+                empty_list.append(y)
+
+    final = list(chain.from_iterable(empty_list))
+    final = final[:100]
+    print(' '.join(final) + "...")
     j += 1
+
+print(urls)
