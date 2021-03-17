@@ -15,14 +15,10 @@ import time
 # code needed to run selenium, browser path is specific to where u save chromediver
 browser=webdriver.Chrome(executable_path="c:\\chromedriver.exe")
 url = "https://mothership.sg/search/?s=resale+flat"
-browser.get(url)
-page_number = 1
 urls = []
 
-
-def getdata(url):
-    r = requests.get(url)
-    return r.text
+browser.get(url)
+page_number = 1
 
 #code to press the button load more results for mothership
 while True:
@@ -53,20 +49,6 @@ while True :
         break
 
 
-
-
-#converts the selenium into a soup obj
-#innerHTML = button.execute_script("return document.body.innerHTML")
-# web_soup = BeautifulSoup(browser, "html.parser")
-#
-# # code used ot scrape out the urls
-# for x in web_soup.findAll('div',{"class": "header"}):
-#     link = x.find('a',href=True)
-#     if link is None:
-#         continue
-#     print(link['href'])
-
-
 browser.close()
 
 j = 0
@@ -95,6 +77,5 @@ for i in urls:
     final = list(chain.from_iterable(empty_list))
     final = final[:100]
     print(' '.join(final) + "...")
+    print()
     j += 1
-
-print(urls)
