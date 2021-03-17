@@ -48,7 +48,7 @@
                         marker = new google.maps.Marker({
                             // The below line is equivalent to writing:
                             // position: new google.maps.LatLng(-34.397, 150.644)
-                            name: coordinates[i]["name"],
+                            label: coordinates[i]["name"],
                             position: { lat: parseFloat(coordinates[i]["location"][0]) , lng: parseFloat(coordinates[i]["location"][1]) },
                             map: map,
                         });
