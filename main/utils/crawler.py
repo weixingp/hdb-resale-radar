@@ -69,8 +69,10 @@ while True :
 
 browser.close()
 
+j = 0
+
 for i in urls:
-    URL = urls[i]
+    URL = urls[j]
     page = requests.get(URL)
     soup = BeautifulSoup(page.text, 'html.parser')
 
@@ -93,5 +95,6 @@ for i in urls:
     final = list(chain.from_iterable(empty_list))
     final = final[:100]
     print(' '.join(final) + "...")
+    j += 1
 
 print(urls)
