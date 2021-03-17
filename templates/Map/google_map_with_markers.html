@@ -1,66 +1,75 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Lat/Lng Object Literal</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAalN5tABI31Q0scBRKb3XvcEVjWF-90gY&callback=initMap&libraries=&v=weekly"
-      defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAalN5tABI31Q0scBRKb3XvcEVjWF-90gY&callback=initMap&libraries=&v=weekly"
+            defer
     ></script>
     <style type="text/css">
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            height: 100%;
+        }
 
-      /* Optional: Makes the sample page fill the window. */
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
     </style>
     <script>
-      // In this example, we center the map, and add a marker, using a LatLng object
-      // literal instead of a google.maps.LatLng object. LatLng object literals are
-      // a convenient way to add a LatLng coordinate and, in most cases, can be used
-      // in place of a google.maps.LatLng object.
-      let map;
+        // In this example, we center the map, and add a marker, using a LatLng object
+        // literal instead of a google.maps.LatLng object. LatLng object literals are
+        // a convenient way to add a LatLng coordinate and, in most cases, can be used
+        // in place of a google.maps.LatLng object.
+        let map;
 
-      function initMap() {
-        const mapOptions = {
-          zoom: 16,
-          center: { lat: 1.3509859, lng: 103.84825507492937 },
-        };
-        map = new google.maps.Map(document.getElementById("map"), mapOptions);
-        
-        var coordinates = new Array(new Array(1.35741025, 103.83946944734114),new Array(1.36342845, 103.83426887812382),new Array(1.3479038, 103.8499364),new Array(1.34809155, 103.85516069230769),new Array(1.3488779499999999, 103.85308367802932),new Array(1.3486326499999999, 103.85510491705668),new Array(1.3548297, 103.8468612),new Array(1.3567242, 103.84346500855162),new Array(1.3573729, 103.84847804536601),new Array(1.35003245, 103.85317368900223),new Array(1.360222, 103.8320839),new Array(1.3627589, 103.83276225),new Array(1.3460955499999998, 103.85046527739806),new Array(1.3497445, 103.83868181922091),new Array(1.35731545, 103.84581315505883),new Array(1.3455005999999998, 103.85214372908314),new Array(1.3483952000000001, 103.85083126704555),new Array(1.35142015, 103.8371513861609),new Array(1.3441284, 103.8562493),new Array(1.3452161, 103.8558022198873),new Array(1.34693715, 103.84939788625971),new Array(1.3462184, 103.8515118847227),new Array(1.3458613, 103.85360316116112),new Array(1.34507265, 103.85350755432164),new Array(1.3468190999999998, 103.85063309728856),new Array(1.3622542, 103.8432325794257),new Array(1.3588413, 103.84385347762068),new Array(1.35839865, 103.84732724011607),new Array(1.35636435, 103.84398571653658),new Array(1.34654545, 103.85140243941271),new Array(1.34618195, 103.85604697260504),new Array(1.3490844, 103.85631549608578),new Array(1.3559282499999998, 103.84516399580886),new Array(1.3603001, 103.8320554),new Array(1.34979195, 103.85126076459237),new Array(1.3592269, 103.84355977543319),new Array(1.3598696499999998, 103.84453090425157),new Array(1.3566045500000001, 103.84814802644698),new Array(1.3619189999999999, 103.84285501047592),new Array(1.34827415, 103.85375354042301),new Array(1.35048425, 103.83814895451701),new Array(1.3615502, 103.84406176284853),new Array(1.3593596, 103.8294519),new Array(1.3567233, 103.8462278),new Array(1.3584732, 103.84217804371795),new Array(1.3561236, 103.8463506),new Array(1.3589468, 103.84241943382229),new Array(1.35474475, 103.84774895994474),new Array(1.3607546, 103.84552702786536),new Array(1.3508431, 103.8386864),new Array(1.35752675, 103.84878858291088),new Array(1.3582225, 103.8318362),new Array(1.3475147, 103.8565672578878),new Array(1.3505308999999999, 103.85204999215668),new Array(1.3628505, 103.83474575),new Array(1.3472835, 103.85417996831485),new Array(1.3569258, 103.84513317022387),new Array(1.3571002, 103.84881894613726),new Array(1.3560652, 103.84349798461022),new Array(1.3467148999999998, 103.85581893630226),new Array(1.3549118, 103.8366474),new Array(1.3630843000000001, 103.83377082488701),new Array(1.3443513999999999, 103.8539971939865),new Array(1.35644755, 103.84281325907892),new Array(1.34722365, 103.84882736215093),new Array(1.3461525, 103.85484295882767),new Array(1.3464918, 103.85047442096774),new Array(1.358732, 103.8316987),new Array(1.3504380500000002, 103.85121902165135),new Array(1.3614076000000002, 103.84251752211394),new Array(1.3502312, 103.8518352821491),new Array(1.349018, 103.84802694965617),new Array(1.3445520499999999, 103.85130345),new Array(1.34594535, 103.85655110770655),new Array(1.35612865, 103.8448870863424),new Array(1.34860065, 103.8518574),new Array(1.3604704, 103.843911181924),new Array(1.34940615, 103.8522869844987),new Array(1.3616456000000001, 103.8428558005391),new Array(1.3458811000000002, 103.85105799651515),new Array(1.34969695, 103.85259217639333),new Array(1.3610813, 103.84455702076863),new Array(1.35788375, 103.84389661499344),new Array(1.3482804000000002, 103.85145419592229),new Array(1.34804965, 103.85624215899776),new Array(1.3584372, 103.84830756862081),new Array(1.3633312499999999, 103.83479825),new Array(1.3624982, 103.83326895591242),new Array(1.34568265, 103.85155865389521),new Array(1.3509400999999999, 103.83777298914448),new Array(1.3443689, 103.85448306698302),new Array(1.343887, 103.85514144768435),new Array(1.34849065, 103.85237495926232),new Array(1.34884015, 103.85360323245638),new Array(1.3573919, 103.84472228679755),new Array(1.34699655, 103.85164812951805),new Array(1.35878325, 103.83037210129541),new Array(1.35665565, 103.84490823113958),new Array(1.3486249, 103.85622046558308),new Array(1.3549470000000001, 103.8485339),new Array(1.3482699500000002, 103.854283470979),new Array(1.3501463500000002, 103.83807691662597),new Array(1.3491605, 103.8491808),new Array(1.3472262000000002, 103.85087077969436),new Array(1.34436505, 103.85252172043438),new Array(1.3486695, 103.85040065583134),new Array(1.36120915, 103.8438559910096),new Array(1.362025, 103.84380131797053),new Array(1.3584436000000002, 103.84388387762067),new Array(1.3566071499999999, 103.8422612080831),new Array(1.35749725, 103.84189258032242),new Array(1.34659715, 103.85609319385446),new Array(1.34785895, 103.85358014239924),new Array(1.3606916500000001, 103.84333226312775),new Array(1.35789135, 103.84891080280806),new Array(1.3568660000000001, 103.84971597315595),new Array(1.35860995, 103.84755052604547),new Array(1.3454356, 103.85678031533533),new Array(1.3456093, 103.85177707002062),new Array(1.3446847499999999, 103.85538185304591),new Array(1.3447726, 103.85465555487406),new Array(1.35047805, 103.83874880791666),new Array(1.3546121, 103.84735022096199),new Array(1.3462676, 103.85209200135668),new Array(1.3565122, 103.84907621110693),new Array(1.3556257999999999, 103.84787497380253),new Array(1.3511658500000001, 103.83874044941027),new Array(1.3603922499999999, 103.84479566826298),new Array(1.355151, 103.84692272383138),new Array(1.34647235, 103.85544596969639),new Array(1.3574528, 103.84301217382588),new Array(1.3452395, 103.85274204964556),new Array(1.34546505, 103.85359009279637),new Array(1.3448766, 103.85284640222346),new Array(1.34812115, 103.8523898739439),new Array(1.3469209, 103.85355333858871),new Array(1.3586476, 103.8455353),new Array(1.3566877000000002, 103.84940756350566),new Array(1.3589117, 103.8477488312565),new Array(1.3558544499999998, 103.8488049966549),new Array(1.34955705, 103.83920987650208),new Array(1.35929925, 103.84736728936477),new Array(1.3574062, 103.84353077762069),new Array(1.36045345, 103.84441519234187),new Array(1.3628103500000002, 103.83311130066438),new Array(1.348677, 103.85097970320152),new Array(1.34557135, 103.85096212425404),new Array(1.36140805, 103.84477382653319),new Array(1.34705665, 103.85328479863257),new Array(1.35779095, 103.84626739259062),new Array(1.3572416, 103.84801521237873),new Array(1.3618263499999999, 103.8442928237037),new Array(1.34683335, 103.854123823631),new Array(1.3502412000000001, 103.83929482472054),new Array(1.34408795, 103.85589326309932),new Array(1.3481683, 103.8503118),new Array(1.3625041, 103.8322454),new Array(1.3473349, 103.85049360204962),new Array(1.3499544, 103.85166247787697),new Array(1.35478275, 103.84802024078974),new Array(1.35876825, 103.84201509455832),new Array(1.3504504499999999, 103.85249339998262),new Array(1.3572837500000001, 103.8495950064901),new Array(1.347461, 103.84954582963363),new Array(1.3500771999999999, 103.85254557960533),new Array(1.3580767, 103.8481948),new Array(1.3566785, 103.8383469),new Array(1.3613719999999998, 103.84327360162757),new Array(1.35694035, 103.84207348812265),new Array(1.3569035999999999, 103.84263926090826),new Array(1.3582534, 103.84555266489895),new Array(1.34941275, 103.83871095727154),new Array(1.34857445, 103.84837549700731),new Array(1.3489737499999999, 103.85131185),new Array(1.35811065, 103.8471016130488),new Array(1.3464781000000001, 103.85333894493071),new Array(1.3477416999999998, 103.85427330407771),new Array(1.3441758, 103.85162651838635),new Array(1.348447, 103.849103),new Array(1.3444608, 103.851748),new Array(1.3457534, 103.8504073290526),new Array(1.3580925, 103.84217316461124),new Array(1.35091085, 103.8393943765021),new Array(1.3470133, 103.84999699592228),new Array(1.3470559, 103.8564181787334),new Array(1.3554783499999998, 103.84863209936825),new Array(1.34667555, 103.84996476989784),new Array(1.3457352500000002, 103.85285785377192),new Array(1.36076595, 103.84514014699525),new Array(1.3455105, 103.8548083787048),new Array(1.3611422, 103.84316359607789),new Array(1.34767175, 103.85595748072393),new Array(1.34716295, 103.85107899186642));
-          
-        var marker, i;
-        for (i = 0; i < coordinates.length; i++)
-        marker = new google.maps.Marker({
-          // The below line is equivalent to writing:
-          // position: new google.maps.LatLng(-34.397, 150.644)
-          position: { lat: coordinates[i][0], lng: coordinates[i][1] },
-          map: map,
-        });
-        // You can use a LatLng literal in place of a google.maps.LatLng object when
-        // creating the Marker object. Once the Marker object is instantiated, its
-        // position will be available as a google.maps.LatLng object. In this case,
-        // we retrieve the marker's position using the
-        // google.maps.LatLng.getPosition() method.
-        const infowindow = new google.maps.InfoWindow({
-          content: "<p>Marker Location:" + marker.getPosition() + "</p>",
-        });
-        google.maps.event.addListener(marker, "click", () => {
-          infowindow.open(map, marker);
-        });
-      }
+        function initMap() {
+            const mapOptions = {
+                zoom: 16,
+                center: { lat: 1.3509859, lng: 103.84825507492937 },
+            };
+            map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            $.ajax({
+                url: '/map/markers',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    let coordinates = data;
+                    var marker, i;
+                    for (i = 0; i < coordinates.length; i++){
+                        marker = new google.maps.Marker({
+                            // The below line is equivalent to writing:
+                            // position: new google.maps.LatLng(-34.397, 150.644)
+                            name: coordinates[i]["name"],
+                            position: { lat: parseFloat(coordinates[i]["location"][0]) , lng: parseFloat(coordinates[i]["location"][1]) },
+                            map: map,
+                        });
+                    }
+
+                    const infowindow = new google.maps.InfoWindow({
+                        content: "<p>Marker Location:" + marker.getPosition() + "</p>",
+                    });
+                    google.maps.event.addListener(marker, "click", () => {
+                        infowindow.open(map, marker);
+                    });
+                },
+                error: function (err){
+                    alert("Unable to load map markers. Please retry later.")
+                }
+            });
+
+        }
     </script>
-  </head>
-  <body>
-    <div id="map"></div>
-  </body>
+</head>
+<body>
+<div id="map"></div>
+</body>
 </html>

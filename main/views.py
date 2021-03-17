@@ -1,7 +1,9 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
+from django.template import loader
+
 from main.APIManager import APIManager
 from main.models import Town, BlockAddress
 
@@ -28,3 +30,11 @@ def map_markers_json(request):
         res.append(temp)
 
     return JsonResponse(res, safe=False)
+
+
+def map(request):
+    template = loader.get_template('map/google_map_with_markers.html')
+    context = {
+    }
+    response = HttpResponse(template.render(context, request))
+    return response
