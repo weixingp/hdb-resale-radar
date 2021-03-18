@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from main.utils.crawler.MotherShip import MotherShipCrawler
-from main.utils.crawler.StraitsTimes import StraitsTimesCrawler
+from main.utils.crawler.MotherShip import MotherShipBaseCrawler
+from main.utils.crawler.StraitsTimes import StraitsTimesBaseCrawler
 
 
 class Command(BaseCommand):
@@ -9,8 +9,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         crawlers = [
-            StraitsTimesCrawler(),
-            MotherShipCrawler(),
+            StraitsTimesBaseCrawler(),
+            MotherShipBaseCrawler(),
         ]
 
         for crawler in crawlers:

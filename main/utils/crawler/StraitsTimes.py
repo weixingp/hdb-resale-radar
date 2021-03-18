@@ -1,9 +1,9 @@
 from selenium.common.exceptions import NoSuchElementException
 
-from main.utils.crawler.CrawlerInterface import CrawlerInterface
+from main.utils.crawler.CrawlerInterface import BaseCrawler
 
 
-class StraitsTimesCrawler(CrawlerInterface):
+class StraitsTimesBaseCrawler(BaseCrawler):
     source = "Straits Times"
     search_url = "https://www.straitstimes.com/search?searchkey=resale%20flats"
 

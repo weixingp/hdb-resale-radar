@@ -6,7 +6,7 @@ from selenium.common.exceptions import NoSuchElementException, NoSuchWindowExcep
 from selenium.webdriver.chrome.options import Options
 
 
-class CrawlerInterface:
+class BaseCrawler:
     articles = []
     source = "Undefined"
     browser = None
@@ -19,6 +19,10 @@ class CrawlerInterface:
         self.browser = webdriver.Chrome(options=options, executable_path=browser_path)
 
     def get_articles(self, n):
+        """
+        This function should be implemented in a way to save a list of dictionaries into self.articles
+        Each dictionary must contain url, title, summary and image_url
+        """
         raise Exception("get_article_content fn not implemented.")
 
     def save_to_db(self):

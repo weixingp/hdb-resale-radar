@@ -7,12 +7,13 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 import time
 
-from main.utils.crawler.CrawlerInterface import CrawlerInterface
+from main.utils.crawler.CrawlerInterface import BaseCrawler
 
 
-class MotherShipCrawler(CrawlerInterface):
+class MotherShipBaseCrawler(BaseCrawler):
     search_url = "https://mothership.sg/search/?s=resale+flat"
     source = "MotherShip"
+
     def get_articles(self, n):
         browser = self.browser
         browser.get(self.search_url)
