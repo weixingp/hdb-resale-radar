@@ -7,7 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 import time
 
-from main.utils.crawler.CrawlerInterface import BaseCrawler
+from main.utils.crawler.BaseCrawler import BaseCrawler
 
 
 class MotherShipBaseCrawler(BaseCrawler):

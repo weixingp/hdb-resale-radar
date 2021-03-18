@@ -1,6 +1,6 @@
 from selenium.common.exceptions import NoSuchElementException
 
-from main.utils.crawler.CrawlerInterface import BaseCrawler
+from main.utils.crawler.BaseCrawler import BaseCrawler
 
 
 class StraitsTimesBaseCrawler(BaseCrawler):
