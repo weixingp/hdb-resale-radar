@@ -1,3 +1,4 @@
+
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
@@ -11,12 +12,14 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 import time
+from selenium.webdriver.chrome.options import Options
 
 # code needed to run selenium, browser path is specific to where u save chromediver
-browser=webdriver.Chrome(executable_path="c:\\chromedriver.exe")
+options = Options()
+options.headless= True
+browser=webdriver.Chrome(options=options,executable_path="c:\\chromedriver.exe")
 url = "https://mothership.sg/search/?s=resale+flat"
 urls = []
-hdb_data_crawled = []
 
 browser.get(url)
 page_number = 1
@@ -53,20 +56,21 @@ while True :
 browser.close()
 
 j = 0
-
+hdb_flat_crawled = []
 for i in urls:
     URL = urls[j]
     page = requests.get(URL)
     soup = BeautifulSoup(page.text, 'html.parser')
 
+
     for item2 in soup.find_all('figure', class_='featured-image'):
         image = item2.img['src']
-        print(image)
+
 
     empty_list = []
 
     for item2 in soup.find_all('title'):
-        title = item2.string
+       title = item2.string
 
     for item2 in soup.find_all('p'):
         if item2.string is not None:
@@ -75,14 +79,17 @@ for i in urls:
                 empty_list.append(y)
 
     final = list(chain.from_iterable(empty_list))
-    final = final[:100]
-    summary = ' '.join(final) + "..."
+    final =(final[:100])
+    summary = ' '.join(final) + "...."
 
-    hdb_data = {
+    hdb_flat_dictionary = {
         "img": image,
         "title": title,
         "summary": summary,
         "url": URL
     }
-    hdb_data_crawled.append(hdb_data)
-    j += 1
+
+    hdb_flat_crawled.append(hdb_flat_dictionary)
+    j +=1
+
+print(hdb_flat_crawled)
