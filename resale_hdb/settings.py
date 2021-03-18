@@ -33,7 +33,9 @@ except IOError:
         'MYSQL_dbname=\n',
         'MYSQL_username=\n',
         'MYSQL_password=\n',
+        'BROWSER_PATH=\n',
     ]
+
     with open(ENV_FILEPATH, 'w') as f:
         f.writelines(content)
 
