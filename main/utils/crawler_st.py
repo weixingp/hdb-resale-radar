@@ -48,7 +48,7 @@ for x in url_list:
         hdb_flat_dictionary = {
             "img": img_url,
             "title": title.text,
-            "summary": summary.text,
+            "summary": summary.text + "..",
             "url": x
         }
 

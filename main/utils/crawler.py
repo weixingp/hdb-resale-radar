@@ -16,6 +16,7 @@ import time
 browser=webdriver.Chrome(executable_path="c:\\chromedriver.exe")
 url = "https://mothership.sg/search/?s=resale+flat"
 urls = []
+hdb_data_crawled = []
 
 browser.get(url)
 page_number = 1
@@ -58,7 +59,6 @@ for i in urls:
     page = requests.get(URL)
     soup = BeautifulSoup(page.text, 'html.parser')
 
-
     for item2 in soup.find_all('figure', class_='featured-image'):
         image = item2.img['src']
         print(image)
@@ -66,7 +66,7 @@ for i in urls:
     empty_list = []
 
     for item2 in soup.find_all('title'):
-        print(item2.string)
+        title = item2.string
 
     for item2 in soup.find_all('p'):
         if item2.string is not None:
@@ -76,6 +76,12 @@ for i in urls:
 
     final = list(chain.from_iterable(empty_list))
     final = final[:100]
-    print(' '.join(final) + "...")
-    print()
+    summary = ' '.join(final) + "..."
+
+    hdb_data = {
+        "img": image,
+        "title": title,
+        "summary": summary,
+        "url": URL
+    }
     j += 1
