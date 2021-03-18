@@ -29,7 +29,7 @@
         // a convenient way to add a LatLng coordinate and, in most cases, can be used
         // in place of a google.maps.LatLng object.
         let map;
-
+        let openInfoWindow;
         function initMap() {
             const mapOptions = {
                 zoom: 16,
@@ -48,24 +48,31 @@
                         marker = new google.maps.Marker({
                             // The below line is equivalent to writing:
                             // position: new google.maps.LatLng(-34.397, 150.644)
-                            name: coordinates[i]["name"],
+                            label: coordinates[i]["name"],
                             position: { lat: parseFloat(coordinates[i]["location"][0]) , lng: parseFloat(coordinates[i]["location"][1]) },
                             map: map,
                         });
+
+                        let content = coordinates[i]["name"] + "Dummy text Dummy text Dummy text Dummy text Dummy text Dummy text Dummy text Dummy text <a href='google.com'>Test</a>";
+                        let infowindow = new google.maps.InfoWindow();
+                        google.maps.event.addListener(marker,'click', (function(marker, content, infowindow){
+                            return function() {
+
+                                if (openInfoWindow){
+                                    openInfoWindow.close();
+                                }
+
+                                infowindow.setContent(content);
+                                openInfoWindow = infowindow;
+                                infowindow.open(map,marker);
+                            };
+                        })(marker,content,infowindow));
                     }
-
-                    const infowindow = new google.maps.InfoWindow({
-                        content: "<p>Marker Location:" + marker.getPosition() + "</p>",
-                    });
-                    google.maps.event.addListener(marker, "click", () => {
-                        infowindow.open(map, marker);
-                    });
                 },
-                error: function (err){
-                    alert("Unable to load map markers. Please retry later.")
-                }
+                error: function (err) {
+                alert("Unable to load map markers. Please retry later.")
+                },
             });
-
         }
     </script>
 </head>
