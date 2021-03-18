@@ -30,3 +30,11 @@ class Room(models.Model):
     resale_prices = models.FloatField()
     remaining_lease = models.CharField(max_length=255)
     area = models.FloatField()
+
+
+class NewsArticle(models.Model):
+    title = models.CharField(max_length=255)
+    summary = models.TextField(max_length=1000)
+    url = models.CharField(max_length=1028)
+    source = models.CharField(max_length=255)
+    img_url = models.CharField(max_length=1028)
