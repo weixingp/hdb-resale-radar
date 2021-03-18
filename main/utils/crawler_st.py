@@ -46,6 +46,9 @@ for x in url_list:
         #to produce summary for each url
         summary = browser.find_element_by_css_selector('#block-system-main > div > div > div > div.group-ob-readmore > div.field-name-body-linked.field.field-name-body.field-type-text-with-summary.field-label-hidden > div.field-items > div > p:nth-child(1)')
         print(summary.text + "..")
+
+        #to produce url
+        print(x)
         print()
 
 
