@@ -3,7 +3,7 @@ from selenium.common.exceptions import NoSuchElementException
 from main.utils.crawler.BaseCrawler import BaseCrawler
 
 
-class StraitsTimesBaseCrawler(BaseCrawler):
+class StraitsTimesCrawler(BaseCrawler):
     source = "Straits Times"
     search_url = "https://www.straitstimes.com/search?searchkey=resale%20flats"
 

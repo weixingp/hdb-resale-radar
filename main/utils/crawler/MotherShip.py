@@ -10,7 +10,7 @@ import time
 from main.utils.crawler.BaseCrawler import BaseCrawler
 
 
-class MotherShipBaseCrawler(BaseCrawler):
+class MotherShipCrawler(BaseCrawler):
     search_url = "https://mothership.sg/search/?s=resale+flat"
     source = "MotherShip"
 
