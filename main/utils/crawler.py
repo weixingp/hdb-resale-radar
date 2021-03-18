@@ -84,4 +84,5 @@ for i in urls:
         "summary": summary,
         "url": URL
     }
+    hdb_data_crawled.append(hdb_data)
     j += 1
