@@ -38,3 +38,8 @@ class NewsArticle(models.Model):
     url = models.CharField(max_length=1028)
     source = models.CharField(max_length=255)
     img_url = models.CharField(max_length=1028)
+    date = models.DateField(null=True, blank=True)
+
+    def get_summary(self):
+        return self.summary[:150] + "..."
+

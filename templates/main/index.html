@@ -1,6 +1,10 @@
 {% extends "main/base.html" %}
 {% load static %}
 
+{% block extrahead %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHW0mJx7XVXnSeZsGcELMocpCPZKlFAy8&callback=initMap&libraries=&v=weekly" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
 {% block body %}
     <!--&lt;!&ndash; ======= News Ticker ======= &ndash;&gt;-->
     <!--<div class="tcontainer"><div class="ticker-wrap"><div class="ticker-move">-->
@@ -43,7 +47,7 @@
     <main id="main">
 
         <!-- ======= Interactive Map Section (To be changed to Folium Map) ======= -->
-        <section id="interactivemap" class="interactivemap">
+        <section id="interactivemap" class="interactivemap px-3">
             <div class="container" data-aos="fade-up">
 
                 <div class="section-title">
@@ -51,16 +55,19 @@
 
 
                     <!--Inserting a search bar within a map (Not Done) -->
-                    <iframe style="border:0; width:100%; height: 400px" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d510562.45330268116!2d103.56405349164459!3d1.313984343024645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da11238a8b9375%3A0x887869cf52abf5c4!2sSingapore!5e0!3m2!1sen!2ssg!4v1614505889372!5m2!1sen!2ssg" frameborder="0" allowfullscreen></iframe>
+
 
                     <a href="./neighbourhoodSummary.html"><button type="submit" class="btn btn-primary">Submit</button></a> <p>this button is in place to the marker on the map just to show you the next page after user click the marker. I know that the transition to next page is done by clicking the marker.</p>
 
+                </div>
+                <div>
+                    <div id="map" style="height: 500px; width: 100%;"></div>
                 </div>
             </div>
         </section>
 
         <!-- ======= About Section ======= -->
-        <section id="about" class="about">
+        <section id="about" class="about px-3">
             <div class="container">
 
                 <div class="section-title">
@@ -103,35 +110,36 @@
         <section id="news" class="news">
 
             <div class="container">
-                <div class="section-title">
+                <div class="section-title px-3">
                     <h2>News</h2>
                     <p>The ‘Re-think, Re-consider’ team aims to source out the latest news to ensure you are up to date with the lastest property news trend.</p>
                 </div>
                 {% for news in news_list %}
                     <div class="fullbar-item w-100 cursor-pointer">
-                    <div class="container">
-                        <div class="row py-3 py-md-5 align-items-center border-top">
-                            <div class="col-md-10">
-                                <h3 class="feed-item-heading m-0 font-weight-800">
-                                    <a class="text-blue" href="{{ news.url }}">
-                                        <img class="resize" src="{{ news.img_url }}"  alt="">
-                                        {{ news.title }}
-                                    </a>
-                                </h3>
+                        <div class="row">
+                            <div class="col-12 col-md-3 my-4 d-flex align-items-center justify-content-center">
+                                <div style="padding-left:1em">
+                                    <img class="rounded w-100" src="{{ news.img_url }}" alt="Test">
+                                </div>
+
                             </div>
-                            <div class="col-md-2">
-                                <p class="m-0 text-muted text-uppercase">March 15, 2021</p>
+                            <div class="col-12 col-md-7 my-4 d-flex flex-column align-items-start">
+                                <h4>{{ news.title }}</h4>
+                                <p>{{ news.get_summary }}</p>
+                                <p class="small mb-0 text-muted" style="margin-top:auto;">{{ news.source }} | {{ news.date|date:"Y-m-d"}}</p>
+                            </div>
+                            <div class="col-12 col-md-2 my-4 d-flex align-items-center justify-content-center">
+                                <h5><a href="{{ news.url }}" target="_blank">Read more</a></h5>
                             </div>
                         </div>
                     </div>
-                </div>
                 {% endfor %}
             </div>
         </section><!-- End News Section -->
 
         <!-- ======= About Video Section ======= -->
 
-        <section id="about-video" class="about-video">
+        <section id="about-video" class="about-video px-3">
             <div class="container" data-aos="fade-up">
 
                 <div class="row">
@@ -142,7 +150,7 @@
         </section><!-- End About Video Section -->
 
         <!-- ======= Services Section ======= -->
-        <section id="services" class="services">
+        <section id="services" class="services px-3">
             <div class="container">
 
                 <div class="section-title">
@@ -192,4 +200,89 @@
 
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+{% endblock %}
+{% block extrascripts %}
+    <script>
+        // In this example, we center the map, and add a marker, using a LatLng object
+        // literal instead of a google.maps.LatLng object. LatLng object literals are
+        // a convenient way to add a LatLng coordinate and, in most cases, can be used
+        // in place of a google.maps.LatLng object.
+        let map;
+        let openInfoWindow;
+        let markers = [];
+        function initMap() {
+            const mapOptions = {
+                zoom: 12,
+                center: { lat: 1.3509859, lng: 103.84825507492937 },
+            };
+            map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            $.ajax({
+                url: '/map/markers',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    let coordinates = data;
+                    var marker, i;
+                    for (i = 0; i < coordinates.length; i++) {
+                        marker = new google.maps.Marker({
+                            // The below line is equivalent to writing:
+                            // position: new google.maps.LatLng(-34.397, 150.644)
+                            label: {
+                                color: 'black',
+                                fontWeight: 'bold',
+                                text: coordinates[i]["name"],
+                            },
+                            labelClass: "labels",
+                            icon: {
+                                url: '/static/img/home-icon-silhouette.png',
+                                {#size: new google.maps.Size(300, 300),#}
+                                origin: new google.maps.Point(0, 0),
+                                scaledSize: new google.maps.Size(30, 30),
+                                labelOrigin: new google.maps.Point(15, 40)
+                            },
+                            position: {
+                                lat: parseFloat(coordinates[i]["location"][0]),
+                                lng: parseFloat(coordinates[i]["location"][1])
+                            },
+                            map: map,
+                        });
+                        markers.push(marker)
+                    }
+
+                    for (i = 0; i < markers.length; i++) {
+                        marker = markers[i];
+
+                        let content = coordinates[i]["name"] + "Dummy text <a href='google.com'>Test</a>";
+                        let infowindow = new google.maps.InfoWindow();
+                        google.maps.event.addListener(marker,'click', (function(marker, content, infowindow){
+                            return function() {
+
+                                if (openInfoWindow){
+                                    openInfoWindow.close();
+                                }
+
+                                infowindow.setContent(content);
+                                openInfoWindow = infowindow;
+                                infowindow.open(map,marker);
+                            };
+                        })(marker,content,infowindow));
+                    }
+                },
+                error: function (err) {
+                    alert("Unable to load map markers. Please retry later.")
+                },
+            });
+
+            // Set marker visibility when zoom changes
+            google.maps.event.addListener(map, 'zoom_changed', function() {
+                var zoom = map.getZoom();
+                // iterate over markers and call setVisible
+                for (i = 0; i < markers.length; i++) {
+                    let marker = markers[i]
+                    marker.setVisible(zoom >= 12);
+                }
+            });
+        }
+    </script>
 {% endblock %}

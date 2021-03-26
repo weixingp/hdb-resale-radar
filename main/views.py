@@ -6,6 +6,7 @@ from django.template import loader
 
 from main.APIManager import APIManager
 from main.models import Town, BlockAddress, NewsArticle
+from main.utils.util import get_news_for_display
 
 
 def test(request):
@@ -44,7 +45,7 @@ def home_page_view(request):
     template = loader.get_template('main/index.html')
 
     # Crawled News
-    news_list = NewsArticle.objects.filter().order_by("-id")[:10]
+    news_list = get_news_for_display()
 
     context = {
         "news_list": news_list
