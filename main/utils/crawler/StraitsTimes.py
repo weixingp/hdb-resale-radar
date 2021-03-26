@@ -2,7 +2,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from main.utils.crawler.BaseCrawler import BaseCrawler
 from selenium.common.exceptions import TimeoutException
-
+from datetime import datetime
 class StraitsTimesCrawler(BaseCrawler):
     source = "Straits Times"
     search_url = "https://www.straitstimes.com/search?searchkey=resale%20flats"
@@ -47,11 +47,29 @@ class StraitsTimesCrawler(BaseCrawler):
                     summary = browser.find_element_by_css_selector(
                         '#block-system-main > div > div > div > div.group-ob-readmore > div.field-name-body-linked.field.field-name-body.field-type-text-with-summary.field-label-hidden > div.field-items > div > p:nth-child(1)')
 
+                    #to produce a date time obj for each url
+                    date = browser.find_element_by_xpath('//*[@id="block-system-main"]/div/div/div/div[5]/div[1]/ul/li')
+                    articleDateStr = str(date.text)
+                    articleDateStrRep = articleDateStr.replace("PUBLISHED",'')
+                    articleSGTStrip = articleDateStrRep.replace("SGT",'')
+                    articleDateStrip = articleSGTStrip.strip()
+                    articleDateStrWO = articleDateStrip.replace(',', '')
+
+                    if articleDateStrWO == "None" or '\n' in articleDateStrWO:
+                        continue
+
+                    elif "HOURS" in articleDateStrWO:
+                        articleFinal = articleDateStrWO
+                    else:
+                        articleFinal = datetime.strptime(articleDateStrWO, '%b %d %Y %I:%M %p')
+
+
                     hdb_flat_dictionary = {
                         "img_url": img_url,
                         "title": title.text,
                         "summary": summary.text,
-                        "url": x
+                        "url": x,
+                        "article_date": articleFinal
                     }
 
                     hdb_flat_crawled.append(hdb_flat_dictionary)
