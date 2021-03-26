@@ -8,6 +8,7 @@ from selenium.webdriver import ActionChains
 import time
 
 from main.utils.crawler.BaseCrawler import BaseCrawler
+from datetime import datetime
 
 
 class MotherShipCrawler(BaseCrawler):
@@ -82,11 +83,27 @@ class MotherShipCrawler(BaseCrawler):
             final = (final[:100])
             summary = ' '.join(final) + "...."
 
+            for item2 in soup.find('span', class_='publish-date'):
+                if item2 == '\n':
+                    continue
+
+                articleDateStr = str(item2.string)
+                articleDateStrWON = articleDateStr.strip()
+                articleDateStrWO = articleDateStrWON.replace(',', '')
+
+                if articleDateStrWO == 'None' or '\n' in articleDateStrWO:
+                    continue
+
+                else:
+                    articleDate = datetime.strptime(articleDateStrWO, '%B %d %Y %I:%M %p')
+
+
             hdb_flat_dictionary = {
                 "img_url": image,
                 "title": title,
                 "summary": summary,
-                "url": URL
+                "url": URL,
+                "article_date": articleDate
             }
 
             hdb_flat_crawled.append(hdb_flat_dictionary)
