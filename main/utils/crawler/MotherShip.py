@@ -4,7 +4,6 @@ import requests
 from bs4 import BeautifulSoup
 
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver import ActionChains
 import time
 
 from main.utils.crawler.BaseCrawler import BaseCrawler
@@ -81,22 +80,28 @@ class MotherShipCrawler(BaseCrawler):
 
             final = list(chain.from_iterable(empty_list))
             final = (final[:100])
-            summary = ' '.join(final) + "...."
+            summary = ' '.join(final)
 
-            for item2 in soup.find('span', class_='publish-date'):
-                if item2 == '\n':
-                    continue
+            # Post-processing
+            title = str(title.string)
+            title = title.split(" - Mothership.SG")[0]
 
-                articleDateStr = str(item2.string)
-                articleDateStrWON = articleDateStr.strip()
-                articleDateStrWO = articleDateStrWON.replace(',', '')
+            articleDate = None
+            try:
+                for item2 in soup.find('span', class_='publish-date'):
+                    if item2 == '\n':
+                        continue
 
-                if articleDateStrWO == 'None' or '\n' in articleDateStrWO:
-                    continue
+                    articleDateStr = str(item2.string)
+                    articleDateStrWON = articleDateStr.strip()
+                    articleDateStrWO = articleDateStrWON.replace(',', '')
 
-                else:
-                    articleDate = datetime.strptime(articleDateStrWO, '%B %d %Y %I:%M %p')
-
+                    if articleDateStrWO == 'None' or '\n' in articleDateStrWO:
+                        continue
+                    else:
+                        articleDate = datetime.strptime(articleDateStrWO, '%B %d %Y %I:%M %p')
+            except Exception:
+                pass
 
             hdb_flat_dictionary = {
                 "img_url": image,
