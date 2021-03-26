@@ -17,6 +17,7 @@ class BaseCrawler:
         browser_path = os.getenv("BROWSER_PATH")
         options.headless = True
         self.browser = webdriver.Chrome(options=options, executable_path=browser_path)
+        self.browser.set_page_load_timeout(60)
 
     def get_articles(self, n):
         """
