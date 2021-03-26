@@ -1,0 +1,195 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block body %}
+    <!--&lt;!&ndash; ======= News Ticker ======= &ndash;&gt;-->
+    <!--<div class="tcontainer"><div class="ticker-wrap"><div class="ticker-move">-->
+    <!--  <div class="ticker-item">HDB flats remain HOT with SGD$23M unit sold last month.</div>-->
+    <!--  <div class="ticker-item">13 HDB resale flats sold for at least SGD$1M last month</div>-->
+    <!--  <div class="ticker-item">HDB you would not want to miss</div>-->
+    <!--  <div class="ticker-item">BTO or Resale?</div>-->
+    <!--</div></div></div>-->
+    <!--&lt;!&ndash;End of News Ticker&ndash;&gt;-->
+
+    <!-- ======= Header ======= -->
+    <header id="header">
+        <div class="d-flex flex-column">
+
+            <div class="profile">
+                <img src="{% static "/img/display-img.jpg" %}" alt="" class="img-fluid rounded-circle">
+                <h1 class="text-light"><a href="index.html">SS7_Grp 02</a></h1>
+            </div>
+
+            <nav id="navbar" class="nav-menu navbar">
+                <ul>
+                    <li><a href="#hero" class="nav-link scrollto active"><i class="bx bx-home"></i> <span>Home</span></a></li>
+                    <li><a href="#interactivemap" class="nav-link scrollto active"><i class="bx bx-map"></i> <span>Interactive Map</span></a></li>
+                    <li><a href="#about" class="nav-link scrollto"><i class="bx bx-user"></i> <span>About</span></a></li>
+                    <li><a href="#news" class="nav-link scrollto"><i class="bx bx-news"></i> <span>News</span></a></li>
+                    <li><a href="#services" class="nav-link scrollto"><i class="bx bx-server"></i> <span>Services</span></a></li>
+                </ul>
+            </nav><!-- .nav-menu -->
+        </div>
+    </header><!-- End Header -->
+
+    <!-- ======= Hero Section ======= -->
+    <section id="hero" class="d-flex flex-column justify-content-center align-items-center">
+        <div class="hero-container" data-aos="fade-in">
+            <h1>SS7_Group 02</h1>
+            <p> <span class="typed" data-typed-items="Re-Think, Re-Consider, Re-Evaluate"></span></p>
+        </div>
+    </section><!-- End Hero -->
+
+    <main id="main">
+
+        <!-- ======= Interactive Map Section (To be changed to Folium Map) ======= -->
+        <section id="interactivemap" class="interactivemap">
+            <div class="container" data-aos="fade-up">
+
+                <div class="section-title">
+                    <h2>Interactive Map</h2>
+
+
+                    <!--Inserting a search bar within a map (Not Done) -->
+                    <iframe style="border:0; width:100%; height: 400px" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d510562.45330268116!2d103.56405349164459!3d1.313984343024645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da11238a8b9375%3A0x887869cf52abf5c4!2sSingapore!5e0!3m2!1sen!2ssg!4v1614505889372!5m2!1sen!2ssg" frameborder="0" allowfullscreen></iframe>
+
+                    <a href="./neighbourhoodSummary.html"><button type="submit" class="btn btn-primary">Submit</button></a> <p>this button is in place to the marker on the map just to show you the next page after user click the marker. I know that the transition to next page is done by clicking the marker.</p>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ======= About Section ======= -->
+        <section id="about" class="about">
+            <div class="container">
+
+                <div class="section-title">
+                    <h2>About</h2>
+                    <p>The ‘Re-think, Re-consider’ team aims to develop a web application that enables buyers to have
+                        an accurate estimate of resale flat prices in different neighborhoods that are up to date through data
+                        visualization and filtering.
+                        This project will be considered complete when the website has been tested and approved.
+                        This project supports the Housing Development Board (H.D.B) objective in providing affordable,
+                        quality housing and a great living environment where communities thrive</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4" data-aos="fade-right">
+                        <img src="{% static "/img/profile-img.jpg" %}" class="img-fluid" alt="">
+                    </div>
+                    <div class="col-lg-8 pt-4 pt-lg-0 content" data-aos="fade-left">
+                        <h3>What exactly does a home mean to you?</h3>
+
+                        <p class="font-italic">
+                            A place, a person, a feeling - home holds a different meaning for each of us. HDB is an integral part of the
+                            Singapore story. It has a profound influence on the lives of Singaporeans. Because of HDB, we are a nation
+                            of home owners. Because of HDB, we are a cohesive society, with diverse communities living side-by-side, and
+                            forging a closer sense of shared identity.
+                        </p>
+                        <p>
+                            Because of HDB, we are able to deliver a quality of life that is
+                            unique and that you cannot find anywhere else in the world.  Our commitment is that anywhere you go, in any
+                            part of Singapore, you will be able to secure affordable and quality homes with vibrant communities in good
+                            and safe neighbourhoods.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section><!-- End About Section -->
+
+
+        <!-- ======= News Section ======= -->
+        <section id="news" class="news">
+
+            <div class="container">
+                <div class="section-title">
+                    <h2>News</h2>
+                    <p>The ‘Re-think, Re-consider’ team aims to source out the latest news to ensure you are up to date with the lastest property news trend.</p>
+                </div>
+                {% for news in news_list %}
+                    <div class="fullbar-item w-100 cursor-pointer">
+                    <div class="container">
+                        <div class="row py-3 py-md-5 align-items-center border-top">
+                            <div class="col-md-10">
+                                <h3 class="feed-item-heading m-0 font-weight-800">
+                                    <a class="text-blue" href="{{ news.url }}">
+                                        <img class="resize" src="{{ news.img_url }}"  alt="">
+                                        {{ news.title }}
+                                    </a>
+                                </h3>
+                            </div>
+                            <div class="col-md-2">
+                                <p class="m-0 text-muted text-uppercase">March 15, 2021</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section><!-- End News Section -->
+
+        <!-- ======= About Video Section ======= -->
+
+        <section id="about-video" class="about-video">
+            <div class="container" data-aos="fade-up">
+
+                <div class="row">
+
+                    <iframe width="500" height="400px" src="https://www.youtube.com/embed/k7g4yNBjzwU" frameborder="0"          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"          allowfullscreen></iframe>
+                </div>
+            </div>
+        </section><!-- End About Video Section -->
+
+        <!-- ======= Services Section ======= -->
+        <section id="services" class="services">
+            <div class="container">
+
+                <div class="section-title">
+                    <h2>Services</h2>
+                    <p>The services that we provide are listed below</p>
+                </div>
+
+                <div id="filterModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        Flat Type:
+                        <select name="flatType" id="flatType">
+                            <option value="" selected="selected">Select flat type</option>
+                            <option value="1-Room">1-Room</option>
+                            <option value="2-Room">2-Room</option>
+                            <option value="3-Room">3-Room</option>
+                            <option value="4-Room">4-Room</option>
+                            <option value="5-Room">5-Room</option>
+                            <option value="Executive">Executive</option>
+                            <option value="Maisonette">Maisonette</option>
+                        </select>
+                        <br>
+                        Neighbourhood Area:
+                        <select name="neighbourhoodArea" id="neighbourhoodArea">
+                            <option value="" selected="selected">Select neighbourhood area</option>
+                            <option value="Ang Mo Kio">Ang Mo Kio</option>
+                            <option value="Bedok">Bedok</option>
+                            <option value="Bukit Batok">Bukit Batok</option>
+                            <option value="Choa Chu Kang">Choa Chu Kang</option>
+                        </select>
+                        <br>
+                        <a href="./infographic.html"><button type="submit" class="btn btn-primary">Submit</button></a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up">
+                        <div class="icon"><i class="bi bi-graph-up"></i></div>
+                        <h4 class="title"><a href="#filterModal" id="filterButton">Price Prediction</a></h4>
+                        <p class="description">Data geek in the making, we aim to use machine learning to forecast future HDB prices for you to make your decisions or future plannings.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+{% endblock %}

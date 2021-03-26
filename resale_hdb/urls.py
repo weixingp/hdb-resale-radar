@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('test', views.test),
     path('map/markers', views.map_markers_json),
-    path('map', views.map)
+    path('map', views.map),
+    path('', views.home_page_view),
 ]

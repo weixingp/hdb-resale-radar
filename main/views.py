@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.template import loader
 
 from main.APIManager import APIManager
-from main.models import Town, BlockAddress
+from main.models import Town, BlockAddress, NewsArticle
 
 
 def test(request):
@@ -35,6 +35,19 @@ def map_markers_json(request):
 def map(request):
     template = loader.get_template('map/google_map_with_markers.html')
     context = {
+    }
+    response = HttpResponse(template.render(context, request))
+    return response
+
+
+def home_page_view(request):
+    template = loader.get_template('main/index.html')
+
+    # Crawled News
+    news_list = NewsArticle.objects.filter().order_by("-id")[:10]
+
+    context = {
+        "news_list": news_list
     }
     response = HttpResponse(template.render(context, request))
     return response
