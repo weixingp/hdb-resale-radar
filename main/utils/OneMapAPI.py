@@ -1,14 +1,18 @@
 import requests
 
+from main.utils.BaseAPI import BaseAPI
 
-class OneMapAPI:
+
+class OneMapAPI(BaseAPI):
     base_url = "https://developers.onemap.sg/commonapi/search"
+    api_name = "One Map API"
 
     def __init__(self):
-        if not self.test_connection():
+        super().__init__()
+        if not self.__test_connection():
             raise Exception("Unable to initiate OneMapAPI, API Server down.")
 
-    def test_connection(self):
+    def __test_connection(self):
         payload = {"searchVal": 'Singapore', "returnGeom": "Y", "getAddrDetails": "N"}
         connection = requests.get(self.base_url, params=payload)
         if connection.status_code == 200:

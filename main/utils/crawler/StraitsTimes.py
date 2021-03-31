@@ -1,15 +1,17 @@
 from selenium.common.exceptions import NoSuchElementException
 
-from main.utils.crawler.BaseCrawler import BaseCrawler
+from main.utils.crawler.BrowserCrawler import BrowserCrawler
 from selenium.common.exceptions import TimeoutException
 from datetime import datetime
-class StraitsTimesCrawler(BaseCrawler):
-    source = "Straits Times"
-    search_url = "https://www.straitstimes.com/search?searchkey=resale%20flats"
+
+
+class StraitsTimesCrawler(BrowserCrawler):
+    __source = "Straits Times"
+    __search_url = "https://www.straitstimes.com/search?searchkey=resale%20flats"
 
     def get_articles(self, n):
-        browser = self.browser
-        browser.get(self.search_url)
+        browser = self.__browser
+        browser.get(self.__search_url)
         url_list = []
 
         # code to print out the urls after loading more results
@@ -80,7 +82,7 @@ class StraitsTimesCrawler(BaseCrawler):
                 counter += 1
 
             browser.close()
-            self.articles = hdb_flat_crawled
+            self.__articles = hdb_flat_crawled
 
         except TimeoutException:
             print("time out occured")

@@ -3,19 +3,22 @@ import re
 import requests
 from django.core.exceptions import ObjectDoesNotExist
 from main.models import Town, BlockAddress, FlatType, LevelType, Room
+from main.utils.BaseAPI import BaseAPI
 from main.utils.OneMapAPI import OneMapAPI
 
 
-class APIManager:
+class APIManager(BaseAPI):
+    api_name = "HDB API"
     resource_id = '42ff9cfe-abe5-4b54-beda-c88f9bb438ee'  # Resale HDB data ID
     base_url = "https://data.gov.sg/api/action/datastore_search"  # SG Gov Data API
+    full_data = []
 
     def __init__(self):
-        self.full_data = []
-        if not self.test_connection():
+        super().__init__()
+        if not self.__test_connection():
             raise Exception("Unable to initiate APIManager, API Server down.")
 
-    def test_connection(self):
+    def __test_connection(self):
         connection = requests.get(self.base_url, params={"resource_id": self.resource_id})
         if connection.status_code == 200:
             if connection.json()['success']:
