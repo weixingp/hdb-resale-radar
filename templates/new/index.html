@@ -1,0 +1,275 @@
+{% extends "new/components/base.html" %}
+{% block body %}
+    <!-- Start Section Loader -->
+    <div class="loading_overlay bg_dark">
+        <div class="loader_logo">
+            <lottie-player src="https://assets2.lottiefiles.com/private_files/lf30_xj9ogcln.json"
+                           background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay>
+            </lottie-player>
+        </div>
+    </div>
+
+
+    <!-- ================================= start: HERO -->
+    {% include "new/components/header.html" %}
+    <div class="container">
+        <div class="pattern_hero">
+            <div class="hero has_style1">
+                <div class="hero_wrap">
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-lg-7">
+                            <!-- 🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈 title -->
+                            <h2 class="hero_title text-white pb-10">
+                                Make your next <span class="text-primary">Resale Flat</span> decision with us
+                            </h2>
+                            <!-- 🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈 text -->
+                            <p class="hero_text text-white pb-10">
+                                We don't sell flats, but we provide you with<br>
+                                insightful information for your next resale flat <br>
+                                purchase with Big Data and Machine Learning technologies, <br>
+                                completely free of charge.
+                            </p>
+                            <!-- 🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈 buttons -->
+                            <div class="d-block d-md-flex justify-content-center justify-content-lg-start">
+                                <a href="#start-section"
+                                   class=" btn_hero btn mr-20 btn-primary btn sweep_letter sweep_top ">
+                                    <div class="inside_item">
+                                        <span data-hover="Get Started"> Get Started </span>
+                                    </div>
+                                </a>
+                                <a href="../inner_pages/about.html" class="btn_hero btn btn-white btn  ">
+                                    <div class="inside_item">
+                                        <span> learn more </span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <!-- 🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈 image -->
+                            <div class="img_wrap">
+                                <img class="anim-up-down" src="https://cdn.kado.sg/themes/site1/img/illustration/wfh_5.svg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ================================= end:  HERO -->
+    <!-- ============================= Client Logos -->
+    <div class="section is_sm numbers  overflow-hidden">
+        <div class="container">
+            <div class="mb-30_reset">
+                <div class="row">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="item__number d-flex flex-column justify-content-center align-items-center">
+                            <div class="icon mr-0">
+                                <i class="ri-bar-chart-2-line"></i>
+                            </div>
+                            <div class="body__content text-center">
+                                <h4><span class="counter">{{ total_data }}</span></h4>
+                                <h6>Unique sales data</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <div class="item__number  d-flex flex-column justify-content-center align-items-center  ">
+                            <div class="icon mr-0">
+                                <i class="ri-community-line"></i>
+                            </div>
+                            <div class="body__content text-center">
+                                <h4><span class="counter">{{ total_towns }}</span></h4>
+                                <h6>Neighbourhoods in SG</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <div class="item__number d-flex flex-column justify-content-center align-items-center ">
+                            <div class="icon mr-0">
+                                <i class="ri-user-line"></i>
+                            </div>
+                            <div class="body__content text-center">
+                                <h4><span class="counter">2000</span></h4>
+                                <h6> Happy users </h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- ============================= section -->
+    <!-- ============================= section -->
+
+
+    <div class="anchor-offset" id="start-section"></div>
+    <section class="section is_sm section_light" >
+        <div class="row justify-content-center">
+            <div class="col-md-10 text-center">
+                <div class="section_head">
+                    <!-- Heading -->
+                    <h2 class="section_title is-center">
+                        <span class="text-primary">Get started</span>
+                    </h2>
+                    <p class="section_description is-center">
+                        Type in the search bar if you have a neighbourhood / location in mind,
+                        Or explore with a map by clicking on "Explore the Radar"
+                    </p>
+                </div>
+                <div class="d-flex justify-content-center mb-20">
+                    <div class="domain_form">
+                        <input type="text" class="form-control" id="location_search" name="location_search"
+                               placeholder="Type in your interested neighbourhood to start">
+                        <a href="#"
+                           class="btn btn_search btn-dark d-flex justify-content-center align-items-center text-white ">
+                            <span> <i class="ri-search-line"></i> Search </span>
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <h3>OR</h3>
+                    <a href="/radar" class="btn btn-primary btn-lg mt-5">Explore the Radar</a>
+                </div>
+            </div>
+        </div>
+    </section>    <!-- ============================= section -->
+
+    <div class="section is_sm feautures has_style1">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 text-center">
+                    <div class="section_head">
+                        <!-- Preheading -->
+                        <h6 class="text-uppercase text-primary mb-10">
+                            # HDB Resale Flats
+                        </h6>
+                        <!-- Heading -->
+                        <h2 class="section_title is-center">
+                            Latest news articles
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <!-- Start blog_masonry -->
+            <section class="blog_masonry two_column">
+                <div class="container">
+                    <div class="row">
+                        {% for news in news_list %}
+                            <div class="col-lg-4 d-flex align-items-stretch">
+                                <div class=" card">
+                                    <a href="{{ news.url }}" class="link_poet" target="_blank">
+                                        <div class="cover_link">
+                                            <img class=" card-img_top main_img" src="{{ news.img_url }}"
+                                                 alt="...">
+                                        </div>
+                                    </a>
+                                    <div class="card-body">
+                                        <div class="about_post">
+                                                <span class="c_ategory">
+                                                    <span>{{ news.source }}</span>
+                                                </span>
+                                            <span class="dot"></span>
+                                            <time>{{ news.date|date:"Y-m-d"}}</time>
+                                        </div>
+                                        <a href="{{ news.url }}" class="d-block" target="_blank">
+                                            <h5 class="card-title">{{ news.title }}</h5>
+                                            <p class="card-text">{{ news.get_summary }}</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+            <!-- End. blog_masonry -->
+        </div>
+        <div class="shape left-0 top-0 d-lg-flex d-none">
+            <img style="max-width: 11rem;" src="https://cdn.kado.sg/themes/site1/img/decorations/pattern.svg" alt="">
+        </div>
+    </div>
+    <div class="container position-relative">
+        <section class="section is_sm showcase has_style1">
+            <div class="swiper_showcase  overflow-hidden">
+                <div class="section_head">
+                    <div class="row justify-content-lg-between align-items-center">
+                        <div class="col-md-6">
+
+                            <!-- Preheading -->
+                            <h6 class="text-uppercase text-primary mb-10">
+                                Updated
+                            </h6>
+                            <!-- Heading -->
+                            <h2 class="section_title mb-0 ">Latest Resale Flats Sold</h2>
+                        </div>
+                    </div>
+                </div>
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper position-relative ">
+                    {% for item in latest_sold_flats %}
+                        <!-- Slides -->
+                        <div class="swiper-slide">
+                            <div class="showcase_item">
+                                <img class="img_item" src="https://cdn.kado.sg/themes/site1/img/illustration/home.jpg" alt="">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a href="#">
+                                            <h5 class="title">{{ item.flat_type.name }}
+                                            </h5>
+                                        </a>
+
+                                        <p class="m-0">Block {{ item.block_address.block}}, {{ item.block_address.street_name}}</p>
+                                    </div>
+
+                                    <div>
+                                        <h5 class="price">${{ item.resale_prices|floatformat }}</h5>
+                                        <span class="place">{{ item.area|floatformat }} m<sup>2</sup></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+                <!-- If we need pagination -->
+                {#                <div class="swiper-pagination"></div>#}
+
+                <!-- If we need navigation buttons -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </section>
+    </div>
+    <section class="section is_sm content section_dark feautures has_stylex" id="about-us1">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-12 col-md-6 col-lg-5">
+                    <!-- Heading -->
+                    <h2 class="section_title">
+                        About us
+                    </h2>
+                    <!-- Text -->
+                    <p class=" section_description ">
+                        Our team aims to develop a web application that enables buyers to have an accurate estimate of resale flat
+                        prices in different neighborhoods that are up to date through data visualization and filtering.
+                    </p>
+                    <!-- Text -->
+                    <p class=" section_description ">
+                        This project supports the Housing and Development Board (H.D.B) objective in providing
+                        affordable, quality housing and a great living environment where communities thrive.
+                    </p>
+                    <a href="/contact-us" class="btn btn-primary btn-rounded"> Contact Us </a>
+                </div>
+                <div class="col-12 col-md-6 col-lg-7">
+                    <div class="grey_space">
+                        <img class="img-fluid anim-up-down" src="https://cdn.kado.sg/themes/site1/img/illustration/8.png" alt="">
+                    </div>
+                </div>
+
+            </div> <!-- / .row -->
+        </div> <!-- / .container -->
+        <div class="shape">
+            <img style="max-width: 11rem;" src="https://cdn.kado.sg/themes/site1/img/decorations/pattern.svg" alt="">
+        </div>
+    </section>
+
+{% endblock %}

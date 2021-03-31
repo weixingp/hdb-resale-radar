@@ -5,8 +5,8 @@ from django.shortcuts import render
 from django.template import loader
 
 from main.APIManager import APIManager
-from main.models import Town, BlockAddress, NewsArticle
-from main.utils.util import get_news_for_display
+from main.models import Town, BlockAddress, NewsArticle, Room
+from main.utils.util import get_news_for_display, get_random_latest_flats
 
 
 def test(request):
@@ -42,13 +42,33 @@ def map(request):
 
 
 def home_page_view(request):
-    template = loader.get_template('main/index.html')
+    template = loader.get_template('new/index.html')
 
     # Crawled News
-    news_list = get_news_for_display()
+    news_list = get_news_for_display(n=6)
+
+    # Stats - To be implemented as API instead
+    total_data = Room.objects.all().count()
+    total_towns = Town.objects.all().count()
+
+    latest_sold_flats = get_random_latest_flats(n=10)
 
     context = {
-        "news_list": news_list
+        "news_list": news_list,
+        "total_data": total_data,
+        "total_towns": total_towns,
+        "latest_sold_flats": latest_sold_flats
     }
+    response = HttpResponse(template.render(context, request))
+    return response
+
+
+def radar_view(request):
+    template = loader.get_template('new/radar.html')
+    towns = Town.objects.all()
+    context = {
+        "towns": towns,
+    }
+
     response = HttpResponse(template.render(context, request))
     return response

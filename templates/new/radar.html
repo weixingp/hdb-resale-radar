@@ -1,0 +1,194 @@
+{% extends "new/components/base.html" %}
+{% block extrahead %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHW0mJx7XVXnSeZsGcELMocpCPZKlFAy8&callback=initMap&libraries=&v=weekly" defer></script>
+    <style>
+        .row-height{
+            height: calc(100vh - 100px);
+        }
+        .left{
+            height: 100%;
+            overflow-y: scroll;
+        }
+
+        .right{
+            height: 100%;
+            overflow-y: hidden;
+        }
+        /*Remove the scrollbar from Chrome, Safari, Edge and IE*/
+        ::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
+        }
+
+        * {
+            -ms-overflow-style: none !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Start Section Loader -->
+    {#    <div class="loading_overlay bg_dark">#}
+    {#        <div class="loader_logo">#}
+    {#            <lottie-player src="https://assets2.lottiefiles.com/private_files/lf30_xj9ogcln.json"#}
+    {#                           background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay>#}
+    {#            </lottie-player>#}
+    {#        </div>#}
+    {#    </div>#}
+
+    {% include "new/components/header.html" %}
+    <div class="container-fluid">
+        <div class="row row-height">
+            <div class="col-4 left">
+                <div class="mt-2 ml-4">
+                    <div class="sticky-top bg-white pb-3">
+                        <h5>Neighbourhoods in Singapore</h5>
+                        <div class="domain_form border mt-3">
+                            <div class="input-group">
+                                <span class="input-group-addon ml-1" style="font-size: 20px;">
+                                    <i class="ri-search-line"></i>
+                                </span>
+                                <input type="text" class="form-control" id="location_search" name="location_search" placeholder="Enter a neighbourhood / location name">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cards -->
+                    <div class="mt-2 mx-3" id="location-cards">
+                        {% for item in towns %}
+                            <div class="card shadow mt-3">
+                                <div class="row no-gutters">
+                                    <div class="col-md-12">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ item.name }}</h5>
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    1-Room Avg: $10000
+                                                </div>
+                                                <div class="col-4">
+                                                    2-Room Avg: $10000
+                                                </div>
+                                                <div class="col-4">
+                                                    3-Room Avg: $10000
+                                                </div>
+                                            </div>
+                                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-8 right">
+                <div id="map" style="height: 700px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footer %}
+{% endblock %}
+{% block extrascripts %}
+    <script>
+        function getMapHeight(){
+            const navbarHeight = 100
+            return window.innerHeight - navbarHeight;
+        }
+
+        $( window ).resize(function() {
+            $("#map").height(getMapHeight());
+        });
+        // In this example, we center the map, and add a marker, using a LatLng object
+        // literal instead of a google.maps.LatLng object. LatLng object literals are
+        // a convenient way to add a LatLng coordinate and, in most cases, can be used
+        // in place of a google.maps.LatLng object.
+        let map;
+        let openInfoWindow;
+        let markers = [];
+        function initMap() {
+            console.log("Google map init...")
+            const mapOptions = {
+                zoom: 12,
+                center: { lat: 1.3509859, lng: 103.84825507492937 },
+            };
+            $("#map").height(getMapHeight());
+            map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            $.ajax({
+                url: '/map/markers',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    let coordinates = data;
+                    var marker, i;
+                    for (i = 0; i < coordinates.length; i++) {
+                        marker = new google.maps.Marker({
+                            // The below line is equivalent to writing:
+                            // position: new google.maps.LatLng(-34.397, 150.644)
+                            label: {
+                                color: 'black',
+                                fontWeight: 'bold',
+                                text: coordinates[i]["name"],
+                            },
+                            labelClass: "labels",
+                            icon: {
+                                url: '/static/img/home-icon-silhouette.png',
+                                {#size: new google.maps.Size(300, 300),#}
+                                origin: new google.maps.Point(0, 0),
+                                scaledSize: new google.maps.Size(30, 30),
+                                labelOrigin: new google.maps.Point(15, 40)
+                            },
+                            position: {
+                                lat: parseFloat(coordinates[i]["location"][0]),
+                                lng: parseFloat(coordinates[i]["location"][1])
+                            },
+                            map: map,
+                        });
+                        markers.push(marker)
+                    }
+
+                    for (i = 0; i < markers.length; i++) {
+                        marker = markers[i];
+
+                        let content = coordinates[i]["name"] + "Dummy text <a href='google.com'>Test</a>";
+                        let infowindow = new google.maps.InfoWindow();
+                        google.maps.event.addListener(marker,'click', (function(marker, content, infowindow){
+                            return function() {
+
+                                if (openInfoWindow){
+                                    openInfoWindow.close();
+                                }
+
+                                infowindow.setContent(content);
+                                openInfoWindow = infowindow;
+                                infowindow.open(map,marker);
+                            };
+                        })(marker,content,infowindow));
+                    }
+                },
+                error: function (err) {
+                    alert("Unable to load map markers. Please retry later.")
+                },
+            });
+
+            // Set marker visibility when zoom changes
+            google.maps.event.addListener(map, 'zoom_changed', function() {
+                var zoom = map.getZoom();
+                // iterate over markers and call setVisible
+                for (i = 0; i < markers.length; i++) {
+                    let marker = markers[i]
+                    marker.setVisible(zoom >= 12);
+                }
+            });
+        }
+    </script>
+    <script>
+        $('#location_search').keyup( function () {
+            $('.card').removeClass('d-none');
+            let filter = $(this).val().toUpperCase(); // get the value of the input, which we filter on
+            $('#location-cards').find('.card .card-body .card-title:not(:contains("'+filter+'"))').parent().parent().parent().parent().addClass('d-none');
+        });
+    </script>
+{% endblock %}
