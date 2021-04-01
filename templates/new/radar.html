@@ -28,27 +28,30 @@
 
 {% block body %}
     <!-- Start Section Loader -->
-    {#    <div class="loading_overlay bg_dark">#}
-    {#        <div class="loader_logo">#}
-    {#            <lottie-player src="https://assets2.lottiefiles.com/private_files/lf30_xj9ogcln.json"#}
-    {#                           background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay>#}
-    {#            </lottie-player>#}
-    {#        </div>#}
-    {#    </div>#}
+        <div class="loading_overlay bg_dark">
+            <div class="loader_logo">
+                <lottie-player src="https://assets2.lottiefiles.com/private_files/lf30_xj9ogcln.json"
+                               background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay>
+                </lottie-player>
+            </div>
+        </div>
 
     {% include "new/components/header.html" %}
     <div class="container-fluid">
         <div class="row row-height">
-            <div class="col-4 left">
-                <div class="mt-2 ml-4">
+            <div class="col-12 col-lg-4 left">
+                <div class="ml-4">
                     <div class="sticky-top bg-white pb-3">
                         <h5>Neighbourhoods in Singapore</h5>
                         <div class="domain_form border mt-3">
                             <div class="input-group">
-                                <span class="input-group-addon ml-1" style="font-size: 20px;">
+                                <span class="input-group-addon ml-1" style="font-size: 20px; margin-top: 0.2em;">
                                     <i class="ri-search-line"></i>
                                 </span>
-                                <input type="text" class="form-control" id="location_search" name="location_search" placeholder="Enter a neighbourhood / location name">
+                                <input type="text" class="form-control" style="margin-top: 0.2em;" id="location_search" name="location_search" placeholder="Enter a neighbourhood / location name">
+                                <span class="input-group-addon mr-1" style="font-size: 20px; margin-top: 0.2em;" id="search-clear">
+                                    <i class="ri-close-line"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -57,32 +60,28 @@
                     <div class="mt-2 mx-3" id="location-cards">
                         {% for item in towns %}
                             <div class="card shadow mt-3">
-                                <div class="row no-gutters">
-                                    <div class="col-md-12">
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ item.name }}</h5>
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    1-Room Avg: $10000
-                                                </div>
-                                                <div class="col-4">
-                                                    2-Room Avg: $10000
-                                                </div>
-                                                <div class="col-4">
-                                                    3-Room Avg: $10000
-                                                </div>
-                                            </div>
-                                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ item.name }}</h5>
+                                    <div class="row card-text">
+                                        <div class="col-4">
+                                            <p class="card-text">1-Room Avg: $10000</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <p class="card-text">2-Room Avg: $10000</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <p class="card-text">3-Room Avg: $10000</p>
                                         </div>
                                     </div>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                                    <a href="/town/{{ item.name }}" class="btn btn-primary btn-sm stretched-link">View Report</a>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
-            <div class="col-8 right">
+            <div class="col-8 right d-none d-lg-block">
                 <div id="map" style="height: 700px; width: 100%;"></div>
             </div>
         </div>
@@ -95,6 +94,10 @@
         function getMapHeight(){
             const navbarHeight = 100
             return window.innerHeight - navbarHeight;
+        }
+
+        function getTownSlug(name){
+            return name.toLowerCase().replace(" ", "-")
         }
 
         $( window ).resize(function() {
@@ -151,8 +154,12 @@
 
                     for (i = 0; i < markers.length; i++) {
                         marker = markers[i];
-
-                        let content = coordinates[i]["name"] + "Dummy text <a href='google.com'>Test</a>";
+                        let label_html = `
+                        <h6> ${coordinates[i]["name"]} </h6>
+                        <br>
+                        <a href="/town/${getTownSlug(coordinates[i]["name"])}">View detailed report</a>
+                        `
+                        let content = label_html;
                         let infowindow = new google.maps.InfoWindow();
                         google.maps.event.addListener(marker,'click', (function(marker, content, infowindow){
                             return function() {
@@ -185,10 +192,52 @@
         }
     </script>
     <script>
-        $('#location_search').keyup( function () {
+        let $searchBox = $('#location_search');
+
+        function search_cards(){
             $('.card').removeClass('d-none');
-            let filter = $(this).val().toUpperCase(); // get the value of the input, which we filter on
-            $('#location-cards').find('.card .card-body .card-title:not(:contains("'+filter+'"))').parent().parent().parent().parent().addClass('d-none');
+            let filter = $searchBox.val().toUpperCase(); // get the value of the input, which we filter on
+            $('#location-cards').find('.card .card-body .card-title:not(:contains("'+filter+'"))').parent().parent().addClass('d-none');
+            if (!$searchBox.val()){
+                $("#search-clear").hide();
+            } else {
+                $("#search-clear").show();
+            }
+        }
+
+        $searchBox.keyup( function () {
+            search_cards();
         });
+
+        if (!$searchBox.val()){
+            $("#search-clear").hide();
+        }
+
+        $("#search-clear").click(function (){
+            $searchBox.val("");
+            search_cards();
+        })
+
+        let getUrlParameter = function getUrlParameter(sParam) {
+            let sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+            return false;
+        };
+
+        const search_location = getUrlParameter("location");
+        if (search_location){
+            $searchBox.val(search_location);
+            search_cards();
+        }
     </script>
 {% endblock %}

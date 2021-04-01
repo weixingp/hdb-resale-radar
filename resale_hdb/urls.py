@@ -20,8 +20,15 @@ from main import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('test', views.test),
-    path('map/markers', views.map_markers_json),
+
     path('map', views.map),
     path('', views.home_page_view),
     path('radar/', views.radar_view)
 ]
+
+api = [
+    path('map/markers', views.map_markers_json),
+    path('api/location-autocomplete', views.location_auto_complete_json),
+]
+
+urlpatterns += api

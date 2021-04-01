@@ -1,4 +1,12 @@
 {% extends "new/components/base.html" %}
+{% load static %}
+{% block extrahead %}
+    <style>
+        .dropdown-menu{
+            top: 1.5em !important;
+        }
+    </style>
+{% endblock %}
 {% block body %}
     <!-- Start Section Loader -->
     <div class="loading_overlay bg_dark">
@@ -117,10 +125,10 @@
                 </div>
                 <div class="d-flex justify-content-center mb-20">
                     <div class="domain_form">
-                        <input type="text" class="form-control" id="location_search" name="location_search"
+                        <input type="text" class="form-control" id="location_search" name="location_search" autocomplete="off"
                                placeholder="Type in your interested neighbourhood to start">
-                        <a href="#"
-                           class="btn btn_search btn-dark d-flex justify-content-center align-items-center text-white ">
+                        <a href="#" id="search-btn"
+                           class="btn btn_search btn-primary d-flex justify-content-center align-items-center text-white ">
                             <span> <i class="ri-search-line"></i> Search </span>
                         </a>
                     </div>
@@ -272,4 +280,30 @@
         </div>
     </section>
 
+{% endblock %}
+{% block extrascripts %}
+    <script src="{% static "js/autocomplete.js" %}"></script>
+    <script>
+        $("#search-btn").click(function(){
+            let location = $(this).parent().find("input").val();
+            window.location.href = "/radar/?location=" + location;
+        })
+
+        $.ajax({
+            url: '/api/location-autocomplete',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                const ac = new Autocomplete(document.getElementById('location_search'), {
+                    data: data,
+                    maximumItems: 5,
+                    highlightTyped: true,
+                    highlightClass: 'text-primary',
+                    onSelectItem: ({label, value}) => {
+                        console.log("user selected:", label, value);
+                      }
+                });
+            }
+        });
+    </script>
 {% endblock %}

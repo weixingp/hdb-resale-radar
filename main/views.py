@@ -72,3 +72,17 @@ def radar_view(request):
 
     response = HttpResponse(template.render(context, request))
     return response
+
+
+def location_auto_complete_json(request):
+    # To be migrated to api view
+    towns = Town.objects.all()
+    res = []
+    for town in towns:
+        temp = {
+            "label": town.name,
+            "value": town.name,
+        }
+        res.append(temp)
+
+    return JsonResponse(res, safe=False)
