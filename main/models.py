@@ -6,6 +6,9 @@ from django.db import models
 class Town(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    def get_slug(self):
+        return self.name.lower().replace(" ", "-")
+
 
 class LevelType(models.Model):
     storey_range = models.CharField(max_length=255, unique=True)
@@ -30,6 +33,7 @@ class Room(models.Model):
     resale_prices = models.FloatField()
     remaining_lease = models.CharField(max_length=255)
     area = models.FloatField()
+    # resale_date = models.DateField(default=)
 
 
 class NewsArticle(models.Model):
@@ -42,4 +46,3 @@ class NewsArticle(models.Model):
 
     def get_summary(self):
         return self.summary[:150] + "..."
-
