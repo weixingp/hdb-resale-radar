@@ -3,9 +3,12 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.template import loader
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from main.APIManager import APIManager
-from main.models import Town, BlockAddress, NewsArticle, Room
+from main.models import Town, BlockAddress, NewsArticle, Room, FlatType
+from main.services import get_hdb_stats
 from main.utils.util import get_news_for_display, get_random_latest_flats
 
 
@@ -86,3 +89,23 @@ def location_auto_complete_json(request):
         res.append(temp)
 
     return JsonResponse(res, safe=False)
+
+
+def summary_view(request):
+    template = loader.get_template('new/summary.html')
+    context = {
+        "town": Town.objects.get(id=5)
+    }
+
+    response = HttpResponse(template.render(context, request))
+    return response
+
+
+class StatsAPI(APIView):
+
+    def get(self, request):
+        town_id = request.GET.get("tid")
+        stats = get_hdb_stats(town_id)
+
+        return Response(stats)
+

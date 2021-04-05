@@ -1,0 +1,91 @@
+{% extends "new/components/base.html" %}
+{% load static %}
+
+{% block extrahead %}
+    <script src="{% static "js/chart.min.js" %}"></script>
+    <script src="https://unpkg.com/@sgratzl/chartjs-chart-boxplot"></script>
+{% endblock %}
+
+{% block body %}
+    {% include "new/components/header.html" %}
+
+    <div class="section is_sm feautures has_style1 pt-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 text-center">
+                    <div class="section_head">
+                        <!-- Heading -->
+                        <h2 class="section_title is-center">
+                            {{ town.name }}
+                        </h2>
+                        <h6 class="text-uppercase text-primary mb-10">
+                            Resale price index: 1.10 (#2 out of 26)
+                        </h6>
+                    </div>
+                    <div id="container" style="width: 100%;">
+                        <canvas id="canvas"></canvas>
+                    </div>
+                    <div id="container" style="width: 100%;" class="mt-3">
+                        <canvas id="canvas2"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extrascripts %}
+    <script>
+        function randomValues(count, min, max) {
+            const delta = max - min;
+            return Array.from({length: count}).map(() => Math.random() * delta + min);
+        }
+        function load_box_plot(town_name, data){
+            const boxplotData = {
+                // define label tree
+                labels: data.labels,
+                datasets: [{
+                    label: town_name,
+                    backgroundColor: 'rgba(255,0,0,0.5)',
+                    borderColor: 'red',
+                    borderWidth: 1,
+                    outlierColor: '#999999',
+                    padding: 10,
+                    itemRadius: 0,
+                    data: data.data
+                }]
+            };
+
+            const ctx = document.getElementById("canvas").getContext("2d");
+            window.myBar = new Chart(ctx, {
+                type: 'boxplot',
+                data: boxplotData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Chart.js Box Plot Chart'
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        $.ajax({
+            url: '/api/hdb-stats',
+            type: 'GET',
+            data: {tid : {{ town.id }}},
+            dataType: 'json',
+            success: function(data) {
+                load_box_plot(data['town_name'], data["boxplot"])
+            },
+            error: function (err) {
+
+            }
+        })
+    </script>
+{% endblock %}

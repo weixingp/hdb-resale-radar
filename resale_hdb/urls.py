@@ -23,12 +23,14 @@ urlpatterns = [
 
     path('map', views.map),
     path('', views.home_page_view),
-    path('radar/', views.radar_view)
+    path('radar/', views.radar_view),
+    path('town/', views.summary_view)
 ]
 
 api = [
     path('map/markers', views.map_markers_json),
     path('api/location-autocomplete', views.location_auto_complete_json),
+    path('api/hdb-stats', views.StatsAPI.as_view())
 ]
 
 urlpatterns += api

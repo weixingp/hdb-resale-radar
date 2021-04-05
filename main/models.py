@@ -36,6 +36,7 @@ class Room(models.Model):
     # resale_date = models.DateField(default=)
 
 
+
 class NewsArticle(models.Model):
     title = models.CharField(max_length=255)
     summary = models.TextField(max_length=1000)
