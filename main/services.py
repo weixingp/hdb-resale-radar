@@ -1,4 +1,30 @@
-from main.models import Room, Town
+from math import floor
+
+from main.models import Room, Town, FlatType
+
+
+def get_4_room_median_for_all_towns():
+    towns = Town.objects.all()
+    flat_type = FlatType.objects.get(name="4 ROOM")
+    res = {}
+    for town in towns:
+        data_set = (
+            Room.objects
+            .filter(block_address__town_name=town, flat_type=flat_type)
+            .order_by("resale_prices")
+            .values_list("resale_prices", flat=True)
+        )
+        data_size = len(data_set)
+        if data_size % 2 == 0:
+            # Even
+            mid = data_size/2 - 1
+        else:
+            mid = floor(data_size/2)
+
+        median = data_set[mid]
+        res[town] = median
+
+    return res
 
 
 def get_hdb_stats(town_id):

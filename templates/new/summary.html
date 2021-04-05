@@ -22,11 +22,13 @@
                             Resale price index: 1.10 (#2 out of 26)
                         </h6>
                     </div>
-                    <div id="container" style="width: 100%;">
-                        <canvas id="canvas"></canvas>
+
+                    <div class="text-left ml-4">
+                        <h4>Summary</h4>
+                        <hr>
                     </div>
-                    <div id="container" style="width: 100%;" class="mt-3">
-                        <canvas id="canvas2"></canvas>
+                    <div id="container" class="mt-3" style="width: 100%;">
+                        <canvas id="canvas"></canvas>
                     </div>
                 </div>
             </div>
@@ -63,12 +65,32 @@
                 data: boxplotData,
                 options: {
                     responsive: true,
-                    legend: {
-                        position: 'top',
+                    plugins: {
+                        title: {
+                            display: false,
+                            position: "bottom",
+                            text: 'Overview of historical resale prices in ' + town_name
+                        },
+                        legend: {
+                            display: false,
+                            position: 'top',
+                        },
                     },
-                    title: {
-                        display: true,
-                        text: 'Chart.js Box Plot Chart'
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: false,
+                                text: 'Flat Type'
+                            },
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Price ( Thousands )'
+                            },
+                        }
                     }
                 }
             });

@@ -5,6 +5,7 @@ from django.db import models
 
 class Town(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    price_index = models.IntegerField(null=True, blank=True)
 
     def get_slug(self):
         return self.name.lower().replace(" ", "-")
@@ -34,7 +35,6 @@ class Room(models.Model):
     remaining_lease = models.CharField(max_length=255)
     area = models.FloatField()
     # resale_date = models.DateField(default=)
-
 
 
 class NewsArticle(models.Model):
