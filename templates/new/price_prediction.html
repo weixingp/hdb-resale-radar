@@ -103,23 +103,22 @@
     <script>
         $("#prediction-form").submit(function(e) {
             e.preventDefault();
+            const $result = $("#prediction-result")
             $.ajax({
                 url: '/api/price-prediction',
                 type: 'POST',
                 data: $("#prediction-form").serialize(),
                 dataType: 'json',
                 success: function (data) {
-                    const $result = $("#prediction-result")
                     $result.empty()
                     if (data.success) {
                         $result.append("<h2>$" + data.result +"</h2>")
                     } else {
-                        $result.append("<p>Please check that you have filled all required fields</p>")
+                        $result.append("<p>" + data.err + "</p>")
                     }
-                    console.log(data)
                 },
                 error: function (err) {
-
+                    $result.append("<p>Something went wrong, please try again later.</p>")
                 }
             })
         })

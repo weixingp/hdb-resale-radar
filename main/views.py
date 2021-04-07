@@ -152,19 +152,23 @@ class PricePredictionAPI(APIView):
             ]
 
             ppm = PricePredictionModel()
-            result = ppm.prediction_for_user_input(user_input)
-            res = {
-                "success": True,
-                "result": result,
-            }
+            try:
+                result = ppm.prediction_for_user_input(user_input)
+                res = {
+                    "success": True,
+                    "result": result,
+                }
+            except:
+                error = "Result not available with your conditions, try changing to some of your conditions."
+                res = {
+                    "success": False,
+                    "err": error,
+                }
         else:
-            errors = []
-            for field, error in form.errors.items():
-                err = f"{field}: {error[0]}"
-                errors.append(err)
+            error = "Please check that all required fields are filled."
             res = {
                 "success": False,
-                "err": errors
+                "err": error
             }
 
         return Response(res)
