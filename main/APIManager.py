@@ -65,15 +65,6 @@ class APIManager(BaseAPI):
             return False
 
         one_map = OneMapAPI()
-        level_options = {
-            '01 TO 03': 'Very Low',
-            '04 TO 06': 'Low',
-            '07 TO 09': 'Intermediate',
-            '10 TO 12': 'High',
-            '13 TO 15': 'Very High',
-            'others': 'Very High',
-            'undefined': 'Undefined'
-        }
         count = 0
         if update:
             try:
@@ -81,9 +72,11 @@ class APIManager(BaseAPI):
             except ObjectDoesNotExist:
                 last_id = 0
             total = int(self.full_data[0]["_id"]) - last_id
-
-            if total == 0 and print_output:
-                print("Nothing to update, exiting...")
+            print(int(self.full_data[0]["_id"]))
+            if total <= 0:
+                if print_output:
+                    print("Nothing to update, exiting...")
+                return
         else:
             total = len(self.full_data)
             last_id = 0

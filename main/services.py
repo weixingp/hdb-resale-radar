@@ -12,7 +12,6 @@ def calc_resale_price_rank(town):
 def get_4_room_median_for_all_towns():
     towns = Town.objects.all()
     flat_type = FlatType.objects.get(name="4 ROOM")
-    res = {}
     for town in towns:
         data_set = (
             Room.objects
@@ -27,10 +26,9 @@ def get_4_room_median_for_all_towns():
         else:
             mid = floor(data_size/2)
 
-        median = data_set[mid]
-        res[town] = median
-
-    return res
+        median = data_set[int(mid)]
+        town.median_price = median
+        town.save()
 
 
 def get_hdb_stats(town_id):
