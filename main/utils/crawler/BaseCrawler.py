@@ -2,8 +2,8 @@ from main.models import NewsArticle
 
 
 class BaseCrawler:
-    __articles = []
-    __source = "Undefined"
+    articles = []
+    source = "Undefined"
     __search_url = None
 
     def get_articles(self, n):
@@ -14,10 +14,10 @@ class BaseCrawler:
         raise Exception("get_article_content fn not implemented.")
 
     def save_to_db(self):
-        if not self.__articles:
+        if not self.articles:
             raise ValueError("Articles not loaded yet.")
 
-        for article in self.__articles:
+        for article in self.articles:
             try:
                 crawled = NewsArticle.objects.filter(
                     url=article['url']
@@ -28,7 +28,7 @@ class BaseCrawler:
                         title=article['title'],
                         summary=article['summary'],
                         img_url=article['img_url'],
-                        source=self.__source,
+                        source=self.source,
                         date=article['article_date']
                     )
             except KeyError:

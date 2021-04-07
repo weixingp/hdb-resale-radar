@@ -12,10 +12,10 @@ from datetime import datetime
 
 class MotherShipCrawler(BrowserCrawler):
     __search_url = "https://mothership.sg/search/?s=resale+flat"
-    __source = "MotherShip"
+    source = "MotherShip"
 
     def get_articles(self, n):
-        browser = self.__browser
+        browser = self.browser
         browser.get(self.__search_url)
         page_number = 1
         urls = []
@@ -114,4 +114,4 @@ class MotherShipCrawler(BrowserCrawler):
             hdb_flat_crawled.append(hdb_flat_dictionary)
             j += 1
 
-        self.__articles = hdb_flat_crawled
+        self.articles = hdb_flat_crawled

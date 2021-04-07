@@ -6,11 +6,11 @@ from datetime import datetime
 
 
 class StraitsTimesCrawler(BrowserCrawler):
-    __source = "Straits Times"
+    source = "Straits Times"
     __search_url = "https://www.straitstimes.com/search?searchkey=resale%20flats"
 
     def get_articles(self, n):
-        browser = self.__browser
+        browser = self.browser
         browser.get(self.__search_url)
         url_list = []
 
@@ -82,7 +82,7 @@ class StraitsTimesCrawler(BrowserCrawler):
                 counter += 1
 
             browser.close()
-            self.__articles = hdb_flat_crawled
+            self.articles = hdb_flat_crawled
 
         except TimeoutException:
             print("time out occured")

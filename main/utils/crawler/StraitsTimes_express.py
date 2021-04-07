@@ -6,7 +6,7 @@ from main.utils.crawler.BaseCrawler import BaseCrawler
 
 
 class StraitsTimesCrawler(BaseCrawler):
-    __source = "Straits Times"
+    source = "Straits Times"
     __search_url = "https://api.queryly.com/json.aspx"
 
     def get_articles(self, n):
@@ -34,5 +34,5 @@ class StraitsTimesCrawler(BaseCrawler):
                 "url": article["link"],
                 "article_date": date,
             }
-            self.__articles.append(temp)
+            self.articles.append(temp)
 
