@@ -27,15 +27,7 @@
 {% endblock %}
 
 {% block body %}
-    <!-- Start Section Loader -->
-        <div class="loading_overlay bg_dark">
-            <div class="loader_logo">
-                <lottie-player src="https://assets2.lottiefiles.com/private_files/lf30_xj9ogcln.json"
-                               background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay>
-                </lottie-player>
-            </div>
-        </div>
-
+    {% include "new/components/loader.html" %}
     {% include "new/components/header.html" %}
     <div class="container-fluid">
         <div class="row row-height">
@@ -154,16 +146,18 @@
 
                     for (i = 0; i < markers.length; i++) {
                         marker = markers[i];
+                        let town_name = coordinates[i]["name"]
                         let label_html = `
-                        <h6> ${coordinates[i]["name"]} </h6>
+                        <h6> ${town_name} </h6>
                         <br>
-                        <a href="/town/${getTownSlug(coordinates[i]["name"])}">View detailed report</a>
+                        <a href="/town/${getTownSlug(town_name)}">View detailed report</a>
                         `
                         let content = label_html;
                         let infowindow = new google.maps.InfoWindow();
+
+                        // Add info window to marker
                         google.maps.event.addListener(marker,'click', (function(marker, content, infowindow){
                             return function() {
-
                                 if (openInfoWindow){
                                     openInfoWindow.close();
                                 }
@@ -171,8 +165,15 @@
                                 infowindow.setContent(content);
                                 openInfoWindow = infowindow;
                                 infowindow.open(map,marker);
+                                map.panTo(this.getPosition());
+                                map.setZoom(15);
+                                // Fill search bar
+                                $("#location_search").val(town_name);
+                                search_cards();
                             };
                         })(marker,content,infowindow));
+
+                        //
                     }
                 },
                 error: function (err) {

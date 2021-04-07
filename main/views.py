@@ -1,7 +1,8 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
 
 # Create your views here.
+from django.shortcuts import redirect
 from django.template import loader
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -93,10 +94,16 @@ def location_auto_complete_json(request):
     return JsonResponse(res, safe=False)
 
 
-def summary_view(request):
+def summary_view(request, slug):
     template = loader.get_template('new/summary.html')
+    town_name = slug.replace("-", " ").upper()
+    try:
+        town = Town.objects.get(name=town_name)
+    except ObjectDoesNotExist:
+        return redirect("/404")
+
     context = {
-        "town": Town.objects.get(id=5)
+        "town": town
     }
 
     response = HttpResponse(template.render(context, request))
@@ -107,7 +114,7 @@ def price_prediction_view(request):
     template = loader.get_template('new/price_prediction.html')
     flat_types = FlatType.objects.all()
     level_types = LevelType.objects.all().order_by("-storey_range")
-    towns = Town.objects.all()
+    towns = Town.objects.all().order_by("name")
     for level in level_types:
         level_range = get_storey_range(level.storey_range, reverse=True)
         level.storey_range = f"{level.storey_range} ({level_range})"
@@ -161,3 +168,10 @@ class PricePredictionAPI(APIView):
             }
 
         return Response(res)
+
+
+def handle404(request, exception):
+    template = loader.get_template("new/404.html")
+    context = {}
+    response = HttpResponse(template.render(context, request))
+    return response

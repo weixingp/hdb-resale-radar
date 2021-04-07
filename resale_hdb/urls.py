@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from main import views
 
+handler404 = views.handle404
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('test', views.test),
@@ -24,7 +26,7 @@ urlpatterns = [
     path('map', views.map),
     path('', views.home_page_view),
     path('radar/', views.radar_view),
-    path('town/', views.summary_view),
+    path('town/<str:slug>', views.summary_view),
     path('price-prediction/', views.price_prediction_view),
 ]
 

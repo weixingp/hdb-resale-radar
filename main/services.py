@@ -42,7 +42,7 @@ def get_hdb_stats(town_id):
     Box plot for min, max, q1, q3 and mean of different room type
     for a specific town.
     """
-    room_types = rooms.order_by().values_list('flat_type__name', flat=True).distinct()
+    room_types = rooms.order_by().values_list('flat_type__name', flat=True).distinct().order_by("flat_type__name")
     labels = []
     data_points = []
     for room_type in room_types:
