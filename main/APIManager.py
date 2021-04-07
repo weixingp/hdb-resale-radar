@@ -1,3 +1,4 @@
+import datetime
 import re
 
 import requests
@@ -5,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from main.models import Town, BlockAddress, FlatType, LevelType, Room
 from main.utils.BaseAPI import BaseAPI
 from main.utils.OneMapAPI import OneMapAPI
+from main.utils.util import get_storey_range
 
 
 class APIManager(BaseAPI):
@@ -68,6 +70,7 @@ class APIManager(BaseAPI):
             '04 TO 06': 'Low',
             '07 TO 09': 'Intermediate',
             '10 TO 12': 'High',
+            '13 TO 15': 'Very High',
             'others': 'Very High',
             'undefined': 'Undefined'
         }
@@ -96,11 +99,13 @@ class APIManager(BaseAPI):
             # Process town data
             town = room['town']
 
-            town_obj = Town.objects.filter(name=town)
-            if not town_obj:
-                town_obj = Town.objects.create(name=town)
-            else:
-                town_obj = town_obj[0]
+            town_obj, created = Town.objects.get_or_create(name=town)
+
+            # town_obj = Town.objects.filter(name=town)
+            # if not town_obj:
+            #     town_obj = Town.objects.create(name=town)
+            # else:
+            #     town_obj = town_obj[0]
 
             # Process address data
             block = room['block']
@@ -147,35 +152,12 @@ class APIManager(BaseAPI):
 
             # Process flat type
             flat_type = room['flat_type']
-
-            flat_type_obj = FlatType.objects.filter(name=flat_type)
-            if not flat_type_obj:
-                flat_type_obj = FlatType.objects.create(
-                    name=flat_type
-                )
-            else:
-                flat_type_obj = flat_type_obj[0]
+            flat_type_obj, created = FlatType.objects.get_or_create(name=flat_type)
 
             # Process level
-            level = room['storey_range']
-            try:
-                level = level_options[level]
-            except KeyError:
-                level = re.search(r'\d+', level).group()
-                if level:
-                    level = int(level)
-                    if level > 13:
-                        level = level_options['others']
-                    else:
-                        level = level_options['undefined']
-                else:
-                    level = level_options['undefined']
-
-            level_type_obj = LevelType.objects.filter(storey_range=level)
-            if not level_type_obj:
-                level_type_obj = LevelType.objects.create(storey_range=level)
-            else:
-                level_type_obj = level_type_obj[0]
+            level_n = room['storey_range']
+            level = get_storey_range(level_n)
+            level_type_obj, created = LevelType.objects.get_or_create(storey_range=level)
 
             # Process Room data
             price = float(room['resale_price'])
@@ -183,9 +165,14 @@ class APIManager(BaseAPI):
             area = room['floor_area_sqm']
             room_id = room['_id']
             room_obj = Room.objects.filter(id=room_id)
+            try:
+                year, date = room['month'].split('-')
+                resale_date = datetime.datetime(int(year), int(date), 1)
+            except:
+                resale_date = None
 
             if not room_obj:
-                room_obj = Room.objects.create(
+                Room.objects.create(
                     id=room_id,
                     flat_type=flat_type_obj,
                     level_type=level_type_obj,
@@ -193,4 +180,5 @@ class APIManager(BaseAPI):
                     resale_prices=price,
                     remaining_lease=lease,
                     area=area,
+                    resale_date=resale_date,
                 )

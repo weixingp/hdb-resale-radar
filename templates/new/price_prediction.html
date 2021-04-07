@@ -1,0 +1,127 @@
+{% extends "new/components/base.html" %}
+{% load static %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block body %}
+    {% include "new/components/header.html" %}
+
+    <section class="section  is_sm section_light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5">
+                    <h1 class="mb-20">Price Prediction</h1>
+{#                    <p class=" section_description ">#}
+{#                        Get a rough estimate of  resale flat prices based on some conditions you provide to us.#}
+{#                    </p>#}
+                    <div class="information_agency box sh_3 p-20 bg-white d-md-flex">
+{#                        <div class="item_data mr-5">#}
+{#                            <h6>Work Inquiries</h6>#}
+{#                            <a class="tel" href="tel:+212 6 46 05 26 56">+212 6 46 05 26 56</a>#}
+{#                        </div>#}
+                        <div class="item_data">
+                            <h6>Get a rough estimate of  resale flat prices based on some conditions you provide to us.</h6>
+                        </div>
+                    </div>
+                    <img class="img-fluid w-50" src="https://cdn.kado.sg/themes/site1//img/decorations/pattern.svg " alt="">
+
+
+                </div>
+                <div class="col-lg-6 ml-auto">
+
+                    <div class="form_cc_four bg_dark">
+                        <form class="row" id="prediction-form">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="flat_type">Flat Type</label>
+                                    <select class="form-control" name="flat_type" id="flat_type" required>
+                                        <option disabled selected value="">Select</option>
+                                        {% for option in flat_types %}
+                                            <option class="form-select" value="{{ option.id }}">{{ option.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="level_type">Level Range</label>
+                                    <select class="form-control" name="level_type" id="level_type" required>
+                                        <option disabled selected value="">Select</option>
+                                        {% for option in level_types %}
+                                            <option class="form-select" value="{{ option.id }}">{{ option.storey_range }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="town">Town</label>
+                                    <select class="form-control" name="town" id="town" required>
+                                        <option disabled selected value="">Select</option>
+                                        {% for option in towns %}
+                                            <option class="form-select" value="{{ option.id }}">{{ option.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Area (m<sup>2</sup>)</label>
+                                    <input type="number" class="form-control" placeholder="Area in square meter" max="300" name="area" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Remaining Lease</label>
+                                    <input type="number" class="form-control" placeholder="1 - 99 years" min="1" max="99" name="remaining_lease" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Result:</label>
+                                    <div id="prediction-result">
+                                        <p>Click on the "Predict" button after you have input the conditions.</p>
+{#                                        <h2 class="text-white text-center">$100000</h2>#}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 margin-t-2 d-flex flex-row-reverse">
+                                <button type="submit" class="btn btn-primary rounded-8">Predict</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block extrascripts %}
+    <script>
+        $("#prediction-form").submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/api/price-prediction',
+                type: 'POST',
+                data: $("#prediction-form").serialize(),
+                dataType: 'json',
+                success: function (data) {
+                    const $result = $("#prediction-result")
+                    $result.empty()
+                    if (data.success) {
+                        $result.append("<h2>$" + data.result +"</h2>")
+                    } else {
+                        $result.append("<p>Please check that you have filled all required fields</p>")
+                    }
+                    console.log(data)
+                },
+                error: function (err) {
+
+                }
+            })
+        })
+    </script>
+{% endblock %}

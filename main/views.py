@@ -7,9 +7,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from main.APIManager import APIManager
-from main.models import Town, BlockAddress, NewsArticle, Room, FlatType
+from main.forms import PricePredictionForm
+from main.models import Town, BlockAddress, NewsArticle, Room, FlatType, LevelType
 from main.services import get_hdb_stats
-from main.utils.util import get_news_for_display, get_random_latest_flats
+from main.utils.PricePredictionModel import PricePredictionModel
+from main.utils.util import get_news_for_display, get_random_latest_flats, get_storey_range
 
 
 def test(request):
@@ -101,6 +103,25 @@ def summary_view(request):
     return response
 
 
+def price_prediction_view(request):
+    template = loader.get_template('new/price_prediction.html')
+    flat_types = FlatType.objects.all()
+    level_types = LevelType.objects.all().order_by("-storey_range")
+    towns = Town.objects.all()
+    for level in level_types:
+        level_range = get_storey_range(level.storey_range, reverse=True)
+        level.storey_range = f"{level.storey_range} ({level_range})"
+
+    context = {
+        "flat_types": flat_types,
+        "level_types": level_types,
+        "towns": towns,
+    }
+
+    response = HttpResponse(template.render(context, request))
+    return response
+
+
 class StatsAPI(APIView):
 
     def get(self, request):
@@ -109,3 +130,34 @@ class StatsAPI(APIView):
 
         return Response(stats)
 
+
+class PricePredictionAPI(APIView):
+
+    def post(self, request):
+        form = PricePredictionForm(request.POST)
+        if form.is_valid():
+            user_input = [
+                form.cleaned_data['area'],
+                form.cleaned_data['town'],
+                form.cleaned_data['flat_type'],
+                form.cleaned_data['level_type'],
+                f"{form.cleaned_data['remaining_lease']} Years"
+            ]
+
+            ppm = PricePredictionModel()
+            result = ppm.prediction_for_user_input(user_input)
+            res = {
+                "success": True,
+                "result": result,
+            }
+        else:
+            errors = []
+            for field, error in form.errors.items():
+                err = f"{field}: {error[0]}"
+                errors.append(err)
+            res = {
+                "success": False,
+                "err": errors
+            }
+
+        return Response(res)

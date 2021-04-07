@@ -16,9 +16,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         api = APIManager()
-        # if options['full']:
-        #     api.load_data()
-        #     api.import_to_database(print_output=True)
-        # else:
-        #     api.load_data(order="desc")
-        #     api.import_to_database(update=True, print_output=True)
+        if options['full']:
+            api.load_data()
+            api.import_to_database(print_output=True)
+        else:
+            api.load_data(order="desc")
+            api.import_to_database(update=True, print_output=True)

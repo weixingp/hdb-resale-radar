@@ -14,7 +14,7 @@ class OneMapAPI(BaseAPI):
 
     def __test_connection(self):
         payload = {"searchVal": 'Singapore', "returnGeom": "Y", "getAddrDetails": "N"}
-        connection = requests.get(self.base_url, params=payload)
+        connection = requests.get(self.base_url, params=payload, timeout=10)
         if connection.status_code == 200:
             return True
         else:
@@ -26,14 +26,16 @@ class OneMapAPI(BaseAPI):
             "returnGeom": "Y",
             "getAddrDetails": "N",
         }
+        try:
+            req = requests.get(self.base_url, params=payload, timeout=10)
+            data = req.json()
 
-        req = requests.get(self.base_url, params=payload)
-        data = req.json()
-
-        if data["results"]:
-            res = data["results"][0]
-            lat = res['LATITUDE']
-            long = res['LONGITUDE']
-            return {"lat": lat, "long": long}
-        else:
+            if data["results"]:
+                res = data["results"][0]
+                lat = res['LATITUDE']
+                long = res['LONGITUDE']
+                return {"lat": lat, "long": long}
+            else:
+                return None
+        except:
             return None

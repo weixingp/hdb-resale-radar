@@ -3,6 +3,12 @@ from math import floor
 from main.models import Room, Town, FlatType
 
 
+def calc_resale_price_rank(town):
+    towns = Town.objects.all().order_by("-median_price")
+    index = towns.index(town)
+    return index + 1
+
+
 def get_4_room_median_for_all_towns():
     towns = Town.objects.all()
     flat_type = FlatType.objects.get(name="4 ROOM")

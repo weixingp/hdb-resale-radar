@@ -1,4 +1,5 @@
 import random
+import re
 from math import floor
 
 from django.db.models import Max
@@ -36,3 +37,38 @@ def get_random_latest_flats(n=10):
                 break
 
     return res
+
+
+def get_storey_range(item, reverse=False):
+
+    level_options = {
+        '01 TO 03': 'Very Low',
+        '04 TO 06': 'Low',
+        '07 TO 09': 'Intermediate',
+        '10 TO 12': 'High',
+        'OTHERS': 'Very High',
+        'UNDEFINED': 'Unknown'
+    }
+
+    if not reverse:
+        level_name = item
+        try:
+            level = level_options[level_name]
+        except KeyError:
+            level = re.search(r'\d+', level_name).group()
+            if level:
+                level = int(level)
+                if level >= 13:
+                    level = level_options['OTHERS']
+                else:
+                    level = level_options['UNDEFINED']
+            else:
+                level = level_options['UNDEFINED']
+    else:
+        level = None
+        for key, value in level_options.items():
+            if value == item:
+                level = key
+                break
+
+    return level
