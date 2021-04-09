@@ -143,14 +143,14 @@ class PricePredictionAPI(APIView):
     def post(self, request):
         form = PricePredictionForm(request.POST)
         if form.is_valid():
-            user_input = [
+            user_input = [[
                 form.cleaned_data['area'],
                 form.cleaned_data['town'],
                 form.cleaned_data['flat_type'],
                 form.cleaned_data['level_type'],
                 f"{form.cleaned_data['remaining_lease']} Years"
-            ]
-
+            ]]
+            print(user_input)
             ppm = PricePredictionModel()
             try:
                 result = ppm.prediction_for_user_input(user_input)
@@ -158,7 +158,8 @@ class PricePredictionAPI(APIView):
                     "success": True,
                     "result": result,
                 }
-            except:
+            except Exception as ex:
+                print(repr(ex))
                 error = "Result not available with your conditions, try changing to some of your conditions."
                 res = {
                     "success": False,
