@@ -99,3 +99,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_absolute_url(self):
         return "/users/%i/" % self.pk
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    has_updated_profile = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.email
+
+
+class FavouriteTown(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    town = models.ForeignKey(Town, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('profile', 'town')
