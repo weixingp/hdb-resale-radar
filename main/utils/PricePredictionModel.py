@@ -173,7 +173,8 @@ class PricePredictionModel:
         random_forest = RandomForestClassifier(n_estimators=700, criterion='entropy', random_state=0)
         random_forest.fit(x_encoded, y_encoded)
 
-        pickle.dump(random_forest, open("Random_Forest.sav", 'wb'))
+        joblib.dump(random_forest, "Random_Forest.sav", compress=3)
+        # pickle.dump(random_forest, open("Random_Forest.sav", 'wb'))
 
         return random_forest
 

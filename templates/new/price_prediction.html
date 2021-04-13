@@ -89,7 +89,7 @@
                             </div>
 
                             <div class="col-12 margin-t-2 d-flex flex-row-reverse">
-                                <button type="submit" class="btn btn-primary rounded-8">Predict</button>
+                                <button type="submit" class="btn btn-primary rounded-8" id="predict-btn">Predict</button>
                             </div>
                         </form>
                     </div>
@@ -103,9 +103,10 @@
 {% block extrascripts %}
     <script>
         $("#prediction-form").submit(function(e) {
+            $("predict-btn").prop("disabled", true);
             e.preventDefault();
             const $result = $("#prediction-result");
-            $result.html("<p>Running prediction, please wait...</p>")
+            $result.html("<p class='text-white'>Running prediction, please wait... (This can take up to one minute)</p>")
             $.ajax({
                 url: '/api/price-prediction',
                 type: 'POST',
