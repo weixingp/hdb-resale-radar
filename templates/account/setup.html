@@ -1,0 +1,85 @@
+{% extends "new/components/base.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block title %}
+    <title>Account Set-Up | Singapore Resale Flat Radar</title>
+{% endblock %}
+{% block body %}
+    {% include "new/components/header.html" %}
+
+    <div class="section is_sm feautures has_style1 pt-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 text-center">
+                    <div class="section_head">
+                        <!-- Heading -->
+                        <h4 class="section_title text-left">
+                            Tell us more about yourself
+                        </h4>
+                    </div>
+
+                    <div class="text-left">
+                        <h4>Town Watchlist</h4>
+                        <h6 class="text-muted mt-2">The towns you have selected below will be added to your "Favourites" list</h6>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <form method="post" id="skip-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="skip" value="1">
+                    </form>
+                    <form method="post" id="main-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="skip" value="0">
+                        <div class="row">
+                            {% for town in towns %}
+                                <div class="col-4 col-md-3 pt-4">
+                                    <input class="form-check-input" type="checkbox" name="town-{{ town.id }}" value="1" id="checkbox-{{ town.id }}">
+                                    <label class="form-check-label" for="checkbox-{{ town.id }}">
+                                        {{ town.name }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row mt-4">
+                            <div class="text-left">
+                                <p class="text-dark">Are you planning to purchase a resale flat in the next 6 months?</p>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="plan-to-buy-flat" id="flexRadioDefault1">
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="plan-to-buy-flat" id="flexRadioDefault2" checked>
+                                    <label class="form-check-label" for="flexRadioDefault2">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row text-center mt-4 justify-content-center">
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary btn-lg" id="submit">Submit</button>
+                                <button type="button" class="btn btn-dark btn-lg" onclick="$('skip-form').submit()">Skip</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrascripts %}
+    <script>
+    </script>
+{% endblock %}

@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
 
@@ -10,7 +11,7 @@ from rest_framework.views import APIView
 from main.APIManager import APIManager
 from main.forms import PricePredictionForm
 from main.models import Town, BlockAddress, NewsArticle, Room, FlatType, LevelType
-from main.services import get_hdb_stats
+from main.services import get_hdb_stats, get_all_towns, update_profile_town_favourite, create_user_profile
 from main.utils.PricePredictionModel import PricePredictionModel
 from main.utils.util import get_news_for_display, get_random_latest_flats, get_storey_range
 
@@ -180,3 +181,33 @@ def handle404(request, exception):
     context = {}
     response = HttpResponse(template.render(context, request))
     return response
+
+
+@login_required
+def account_setup_view(request):
+    template = loader.get_template("account/setup.html")
+    towns = get_all_towns()
+    user = request.user
+
+    # Redirects the user to dashboard if he has setup his profile
+    if hasattr(user, "profile"):
+        return redirect("/dashboard")
+
+    if request.method == "POST":
+        profile = create_user_profile(user)
+        profile.has_updated_profile = True
+        profile.save()
+        skip = request.POST.get('skip')
+        if skip != "1":
+            for town in towns:
+                select = request.POST.get(f'town-{town.id}')
+                if select is not None:
+                    if select == '1':
+                        update_profile_town_favourite(profile, town)
+        return redirect("/dashboard")
+    else:
+        context = {
+            "towns": towns,
+        }
+        response = HttpResponse(template.render(context, request))
+        return response

@@ -1,6 +1,6 @@
 from math import floor
 
-from main.models import Room, Town, FlatType
+from main.models import Room, Town, FlatType, FavouriteTown, Profile
 
 
 def calc_resale_price_rank(town):
@@ -63,3 +63,32 @@ def get_hdb_stats(town_id):
     }
 
     return res
+
+
+def get_all_towns():
+    towns = Town.objects.all()
+    return towns
+
+
+def update_profile_town_favourite(profile, town, remove=False):
+
+    if not remove:
+        FavouriteTown.objects.get_or_create(
+            profile=profile,
+            town=town,
+        )
+    else:
+        obj = FavouriteTown.objects.filter(
+            profile=profile,
+            town=town
+        )
+        if obj:
+            obj[0].remove()
+
+
+def create_user_profile(user):
+    profile, created = Profile.objects.get_or_create(
+        user=user,
+    )
+
+    return profile

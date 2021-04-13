@@ -8,3 +8,4 @@ class PricePredictionForm(forms.Form):
     remaining_lease = forms.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
     area = forms.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(300)])
     town = forms.IntegerField()
+

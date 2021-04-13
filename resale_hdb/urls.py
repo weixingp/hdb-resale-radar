@@ -28,6 +28,7 @@ urlpatterns = [
     path('radar/', views.radar_view),
     path('town/<str:slug>', views.summary_view),
     path('price-prediction/', views.price_prediction_view),
+    path('account/setup', views.account_setup_view)
 ]
 
 api = [

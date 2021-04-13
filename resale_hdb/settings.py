@@ -150,7 +150,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 # ACCOUNT_SIGNUP_REDIRECT = '/accounts/signup/details'
-# LOGIN_REDIRECT_URL = "/account/check/"
+LOGIN_REDIRECT_URL = "/dashboard/"
 # ACCOUNT_LOGOUT_REDIRECT_URL = "/account/login/"
 ACCOUNT_LOGOUT_ON_GET = True  # Unsafe, but for this simple app, it's good enough.
 

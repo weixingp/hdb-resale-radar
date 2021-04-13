@@ -39,11 +39,19 @@
                     </li>
 
                 </ul>
-                <div class="nav_account mr-5">
-                    <a href="#Download" class="btn btn-primary">
-                        Login / Register
-                    </a>
-                </div>
+                {% if user.is_authenticated %}
+                    <div class="nav_account mr-5">
+                        <a href="/dashboard" class="btn btn-primary">
+                            My Dashboard
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="nav_account mr-5">
+                        <a href="/account/login" class="btn btn-primary">
+                            Login / Register
+                        </a>
+                    </div>
+                {% endif %}
             </div>
 
         </nav>
