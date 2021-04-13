@@ -1,0 +1,83 @@
+{% extends "new/components/base.html" %}
+{% load static %}
+{% block extrahead %}
+{% endblock %}
+{% block body %}
+    {% include "new/components/header.html" %}
+    <div class="account_page is_basic bg_brand_light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-7">
+                    <div class="sign-form">
+                        <div class="head">
+                            <h2 class="sign_title"> Login / Register  </h2>
+                        </div>
+                        <div class="social_sign ">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="google_sign mb-sm-3" onclick="window.location.href='/account/google/login/'">
+                                        <a href="/account/google/login/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
+                                                 height="24">
+                                                <path fill="none" d="M0 0h24v24H0z"></path>
+                                                <path
+                                                        d="M3.064 7.51A9.996 9.996 0 0 1 12 2c2.695 0 4.959.99 6.69 2.605l-2.867 2.868C14.786 6.482 13.468 5.977 12 5.977c-2.605 0-4.81 1.76-5.595 4.123-.2.6-.314 1.24-.314 1.9 0 .66.114 1.3.314 1.9.786 2.364 2.99 4.123 5.595 4.123 1.345 0 2.49-.355 3.386-.955a4.6 4.6 0 0 0 1.996-3.018H12v-3.868h9.418c.118.654.182 1.336.182 2.045 0 3.046-1.09 5.61-2.982 7.35C16.964 21.105 14.7 22 12 22A9.996 9.996 0 0 1 2 12c0-1.614.386-3.14 1.064-4.49z"
+                                                        fill="rgba(255,255,255,1)"></path>
+                                            </svg>
+                                            <span> Google Sign in </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="or_line"></div>
+                        <div class="d-flex justify-content-center ">
+                            <p class="or">
+                                or sign in with your email </p>
+                        </div>
+
+                        <form>
+                            <label> Email </label>
+                            <div class="input-group mb-20">
+                                <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ri-mail-line"></i>
+                                        </span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Enter Email" required="">
+                            </div>
+                            <label> Password </label>
+                            <div class="input-group mb-20">
+                                <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ri-lock-line"></i>
+                                        </span>
+                                </div>
+                                <input type="password" placeholder="Enter password" class="form-control" required="">
+
+                            </div>
+                            <div class="d-flex justify-content-between   mb-30">
+                                <div class="custom-control custom-checkbox mr-4">
+                                    <input type="checkbox" class="custom-control-input" id="check-1">
+                                    <label class="custom-control-label" for="check-1">Keep me Sign in</label>
+                                </div>
+                                <a href="reset_password_basic.html" class=" link "> Forgot password
+                                    ?</a>
+                            </div>
+                            <button class="btn btn-primary btn-block  mb-30"> Sign in </button>
+                            <span class="signup font-semibold text-14 leading-24 text-gray">Don’t have an account? <a
+                                    href="signup_basic.html" class="font-bold text-primary">Sign up
+                                        now</a></span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
