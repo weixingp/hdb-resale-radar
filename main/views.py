@@ -18,7 +18,7 @@ from main.forms import PricePredictionForm, FavTownForm
 from main.models import Town, BlockAddress, NewsArticle, Room, FlatType, LevelType
 from main.services import get_hdb_stats, get_all_towns, update_profile_town_favourite, create_user_profile, \
     get_fav_towns, calc_resale_price_rank, get_4_room_median_for_town, update_fav_town, check_is_fav, \
-    get_news_for_display, get_random_latest_flats
+    get_news_for_display, get_random_latest_flats, get_total_towns, get_n_mths_median
 from main.utils.PricePredictionModel import PricePredictionModel
 from main.utils.util import get_storey_range
 
@@ -125,19 +125,11 @@ def summary_view(request, slug):
     town_name = slug.replace("-", " ").upper()
     try:
         town = Town.objects.get(name=town_name)
+        all_town = get_all_towns()
         rank, total_towns = calc_resale_price_rank(town)
         is_fav = False
         if request.user.is_authenticated:
             is_fav = check_is_fav(user=request.user, town=town)
-
-        # Get historical median
-        n = 0
-        data = []
-        while n < 6:
-            dt = localtime() - relativedelta(months=n)
-            median = get_4_room_median_for_town(town=town, year=dt.year, month=dt.month)
-            n += 1
-            data.append(median)
 
     except ObjectDoesNotExist:
         return redirect("/404")
@@ -147,6 +139,7 @@ def summary_view(request, slug):
         "rank": rank,
         "total_towns": total_towns,
         "is_fav": is_fav,
+        "all_towns": all_town
     }
 
     response = HttpResponse(template.render(context, request))
@@ -177,7 +170,10 @@ class StatsAPI(APIView):
 
     def get(self, request):
         town_id = request.GET.get("tid")
+        # try:
         stats = get_hdb_stats(town_id)
+        # except Exception:
+        #     raise ValidationError(detail="Something went wrong.")
 
         return Response(stats)
 
@@ -261,8 +257,17 @@ def dashboard_view(request):
     user = request.user
     fav_towns = get_fav_towns(user)
 
+    towns = []
+    for town in fav_towns:
+        rank, total = calc_resale_price_rank(town)
+        four_room_median = get_4_room_median_for_town(town)
+        town.rank = rank
+        town.median = int(four_room_median)
+        towns.append(town)
+
     context = {
-        "favourite_towns": fav_towns,
+        "favourite_towns": towns,
+        "total_towns": get_total_towns(),
     }
 
     response = HttpResponse(template.render(context, request))

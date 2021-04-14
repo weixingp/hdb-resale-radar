@@ -240,6 +240,18 @@
                             <h6 class="text-uppercase text-primary mb-10">
                                 Resale price ranked #{{ rank }} out of {{ total_towns }}
                             </h6>
+                            <div class="d-flex justify-content-center align-items-center mt-4">
+                                <div class="">
+                                    <select class="form-control" name="compare_town" id="flat_type" required="">
+                                        <option disabled="" selected="" value="">Select town</option>
+                                        {% for town in all_towns %}
+                                            <option class="form-select" value="{{ town.id }}">{{ town.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary ml-4" id="compare-btn">Add to compare</button>
+                            </div>
+
                         </div>
                         {% if user.is_authenticated %}
                             <div id="fav-btn" style="position: absolute; right: 0; min-width: 85px">
@@ -251,14 +263,34 @@
                     </div>
 
                     <div class="text-left ml-4">
-                        <h4>Summary</h4>
+                        <h4>Overview</h4>
                         <hr>
                     </div>
                     <div id="container" class="mt-3" style="width: 100%;">
                         <canvas id="canvas"></canvas>
                     </div>
-                </div>
 
+                    <div class="text-left ml-4 mt-5">
+                        <h4>Historical prices</h4>
+                        <h6>Historical median prices of 4-room resale flat for the past 12 months</h6>
+                        <hr>
+                    </div>
+                    <div id="container" class="mt-3" style="width: 100%;">
+                        <canvas id="median-line-chart"></canvas>
+                    </div>
+
+                    <div class="text-left ml-4 mt-5">
+                        <h4>Market Outlook</h4>
+                        <h6>Market supply/demand (Flats sold) for the past 12 months</h6>
+                        <hr>
+                    </div>
+                    <div id="container" class="mt-3" style="width: 100%;">
+                        <canvas id="market-line-chart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-10 text-center mt-5">
+                    <h5 class="mt-5">More stats are coming soon, <a href="{% url "account_signup" %}">register</a> an account to stay tuned to updates.</h5>
+                </div>
             </div>
         </div>
     </div>
@@ -267,10 +299,6 @@
 
 {% block extrascripts %}
     <script>
-        function randomValues(count, min, max) {
-            const delta = max - min;
-            return Array.from({length: count}).map(() => Math.random() * delta + min);
-        }
         function load_box_plot(town_name, data){
             const boxplotData = {
                 // define label tree
@@ -288,7 +316,7 @@
             };
 
             const ctx = document.getElementById("canvas").getContext("2d");
-            window.myBar = new Chart(ctx, {
+            let myChart = new Chart(ctx, {
                 type: 'boxplot',
                 data: boxplotData,
                 options: {
@@ -300,7 +328,7 @@
                             text: 'Overview of historical resale prices in ' + town_name
                         },
                         legend: {
-                            display: false,
+                            display: true,
                             position: 'top',
                         },
                     },
@@ -322,19 +350,125 @@
                     }
                 }
             });
+            return myChart;
+        }
+
+        function load_median_line_chart(town_name, data){
+            let ctx = $('#median-line-chart');
+            const lineChartData = {
+                labels: data.labels,
+                datasets: [{
+                    label: town_name,
+                    data: data.data,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            };
+
+            let myChart = new Chart(ctx, {
+                type: 'line',
+                data: lineChartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: false,
+                            position: "bottom",
+                            text: 'Overview of historical resale prices in ' + town_name
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: false,
+                                text: 'Months'
+                            },
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Price ( Thousands )'
+                            },
+                        }
+                    }
+                }
+            });
+            return myChart;
+        }
+
+        function load_market_line_chart(town_name, data){
+            let ctx = $('#market-line-chart');
+            const lineChartData = {
+                labels: data.labels,
+                datasets: [{
+                    label: town_name,
+                    data: data.data,
+                    fill: false,
+                    borderColor: 'rgb(246, 213, 92)',
+                    tension: 0.1
+                }]
+            };
+
+            let myChart = new Chart(ctx, {
+                type: 'line',
+                data: lineChartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: false,
+                            position: "bottom",
+                            text: 'Market situation in ' + town_name
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: false,
+                                text: 'Months'
+                            },
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Flats sold'
+                            },
+                        }
+                    }
+                }
+            });
+            return myChart;
         }
     </script>
     <script>
+        let box_plot;
+        let median_line;
+        let market_line;
         $.ajax({
             url: '/api/hdb-stats',
             type: 'GET',
             data: {tid : {{ town.id }}},
             dataType: 'json',
             success: function(data) {
-                load_box_plot(data['town_name'], data["boxplot"])
+                box_plot = load_box_plot(data['town_name'], data["boxplot"]);
+                median_line = load_median_line_chart(data['town_name'], data["medians"]);
+                market_line = load_market_line_chart(data['town_name'], data["market"]);
             },
             error: function (err) {
-
+                alert("Unable to load the page at the moment, please try again later.")
             }
         })
 
@@ -368,6 +502,75 @@
                 $("#fav-text").text("Unfavourite");
             {% endif %}
         {% endif %}
+
+
+    </script>
+    <script>
+        function getRandomColor() {
+            const r = Math.floor(Math.random() * (255) );
+            const b = Math.floor(Math.random() * (255) );
+            const g = Math.floor(Math.random() * (255) );
+            return `rgb(${r},${b},${g})`
+        }
+
+        function addDataBoxPlot(chart, town_name, data, color) {
+            const chartDataToPush = {
+                label: town_name,
+                backgroundColor: color,
+                borderColor: 'red',
+                borderWidth: 1,
+                outlierColor: '#999999',
+                padding: 10,
+                itemRadius: 0,
+                data: data.data
+            };
+            chart.data.datasets.push(chartDataToPush);
+            chart.update();
+        }
+
+        function addData(chart, town_name, data, color) {
+            const chartDataToPush = {
+                label: town_name,
+                data: data.data,
+                fill: false,
+                borderColor: color,
+                tension: 0.1
+            };
+            chart.data.datasets.push(chartDataToPush);
+            chart.update();
+        }
+
+        function addTownToChart(town_id){
+            $.ajax({
+                url: '/api/hdb-stats',
+                type: 'GET',
+                data: {tid : town_id},
+                dataType: 'json',
+                success: function(data) {
+                    const color = getRandomColor();
+                    addDataBoxPlot(box_plot, data['town_name'], data['boxplot'], color);
+                    addData(median_line, data['town_name'], data["medians"], color);
+                    addData(market_line, data['town_name'], data["market"], color);
+                    $("#compare-btn").prop("disabled", false).text("Add to compare");
+                    $(`option[value="${town_id}"]`).remove();
+                },
+                error: function (err) {
+                    $("#compare-btn").prop("disabled", false).text("Add to compare");
+                    alert("Unable to load the stats for that town at the moment, please try again later.")
+                }
+            });
+        }
+        $("#compare-btn").click(function (){
+            const town_id = $("select[name='compare_town'] option:selected" ).val();
+            if (!town_id){
+                alert("Please select a town first.")
+                return;
+            }
+            $(this).prop("disabled", true).text("Loading data...");
+            addTownToChart(town_id);
+        })
+
+        $(`option[value="{{ town.id }}"]`).remove();
 
 
     </script>

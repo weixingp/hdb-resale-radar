@@ -1,6 +1,7 @@
 import random
 from math import floor
 
+from dateutil.relativedelta import relativedelta
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
@@ -49,7 +50,7 @@ def get_4_room_median_for_town(town, year=None, month=None):
     else:
         flat_type = FlatType.objects.get(name="4 ROOM")
         if year and month:
-            data_set = (
+            rooms = (
                 Room.objects
                 .filter(
                     block_address__town_name=town,
@@ -57,20 +58,19 @@ def get_4_room_median_for_town(town, year=None, month=None):
                     resale_date__year=year,
                     resale_date__month=month
                 )
-                .order_by("resale_prices")
-                .values_list("resale_prices", flat=True)
             )
         else:
-            data_set = (
+            rooms = (
                 Room.objects
                 .filter(
                     block_address__town_name=town,
                     flat_type=flat_type,
                 )
-                .order_by("resale_prices")
-                .values_list("resale_prices", flat=True)
             )
-
+        if rooms:
+            data_set = rooms.order_by("resale_prices").values_list("resale_prices", flat=True)
+        else:
+            data_set = [0]
         median = get_median(data_set)
         cache.set(cache_key, median, DEFAULT_CACHE_TIME)
     return median
@@ -102,9 +102,23 @@ def get_hdb_stats(town_id):
         "data": data_points
     }
 
+    # --- Line chart ---
+    """
+    Line chart to compare 12mth median prices
+    """
+
+    medians_line_chart = get_n_mths_median(town)
+
+    """
+    Line chart to display rooms sold in 12mths
+    """
+    rooms_sold = get_market_stats(town)
+
     res = {
         "town_name": town.name,
-        "boxplot": boxplot
+        "boxplot": boxplot,
+        "medians": medians_line_chart,
+        "market": rooms_sold,
     }
 
     return res
@@ -215,3 +229,56 @@ def get_random_latest_flats(n=10):
                 break
 
     return res
+
+
+def get_total_towns():
+    return int(Town.objects.all().count())
+
+
+def get_n_mths_median(town, n=12):
+    """
+    Get historical median
+    :param town: town object
+    :param n: months
+    :return: data formatted for chart.js with labels and data field
+    """
+
+    data = {
+        "labels": [],
+        "data": []
+    }
+    while n > 0:
+        dt = localtime() - relativedelta(months=n)
+        median = get_4_room_median_for_town(town=town, year=dt.year, month=dt.month)
+        data['labels'].append(dt.strftime("%b %Y"))
+        data['data'].append(median/1000)
+        n -= 1
+
+    return data
+
+
+def get_market_stats(town, n=12):
+    cache_key = f"market_stats_{town.id}_{n}"
+    cache_value = cache.get(cache_key)
+    if cache_value is None:
+        data = {
+            "labels": [],
+            "data": []
+        }
+
+        while n > 0:
+            dt = localtime() - relativedelta(months=n)
+            rooms_sold = Room.objects.filter(
+                block_address__town_name=town,
+                resale_date__year=dt.year,
+                resale_date__month=dt.month
+            ).count()
+
+            data['labels'].append(dt.strftime("%b %Y"))
+            data['data'].append(rooms_sold)
+            n -= 1
+
+        cache.set(cache_key, data, DEFAULT_CACHE_TIME)
+    else:
+        data = cache_value
+    return data
