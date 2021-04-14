@@ -72,3 +72,16 @@ def get_storey_range(item, reverse=False):
                 break
 
     return level
+
+
+def get_median(data_set):
+    data_size = len(data_set)
+    if data_size % 2 == 0:
+        # Even
+        mid = data_size / 2 - 1
+    else:
+        mid = floor(data_size / 2)
+
+    median = data_set[int(mid)]
+
+    return median

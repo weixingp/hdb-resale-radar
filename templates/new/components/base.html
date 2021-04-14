@@ -38,6 +38,14 @@
             -webkit-background-clip: content-box;
             background-clip: content-box;
         }
+        .notification{
+            position: fixed;
+            min-height: 200px;
+            top: 110px;
+            right:40px;
+            min-width: 400px;
+            z-index: 999;;
+        }
     </style>
     {% block extrahead %}
     {% endblock %}
@@ -45,83 +53,113 @@
 
 
 <body>
-    <div class="overflow-hidden">
-        {% block body %}
-        {% endblock %}
+<div class="overflow-hidden">
+    {% if messages %}
+        <div aria-live="polite" aria-atomic="true" class="notification">
+            <div style="position: absolute; top: 0; right: 0; z-index: 999;">
+                {% for message in messages %}
+                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4500">
+                        <div class="toast-header">
+                            <strong class="mr-auto">HDB Resale Radar</strong>
+                            <small class="ml-4 text-muted">just now</small>
+                            <a class="close text-primary ml-2" data-dismiss="toast" aria-label="Close" aria-hidden="true" style="font-size: 1.2em">&times;</a>
+                        </div>
+                        <div class="toast-body">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
 
-        {% block footer %}
-            {% include "new/components/footer.html" %}
-        {% endblock %}
-    </div>
+            </div>
+        </div>
+
+    {% endif %}
+    {% block body %}
+    {% endblock %}
+
+    {% block footer %}
+        {% include "new/components/footer.html" %}
+    {% endblock %}
+</div>
 
 <!-- scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdn.kado.sg/themes/site1/js/Plugins.js"></script>
-    <script src="https://cdn.kado.sg/themes/site1/js/lottie.js"></script>
-    <script src="https://cdn.kado.sg/themes/site1/js/jquery.hover3d.min.js"></script>
-    <script src="https://cdn.kado.sg/themes/site1/js/jquery-modal-video.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.kado.sg/themes/site1/js/Plugins.js"></script>
+<script src="https://cdn.kado.sg/themes/site1/js/lottie.js"></script>
+<script src="https://cdn.kado.sg/themes/site1/js/jquery.hover3d.min.js"></script>
+<script src="https://cdn.kado.sg/themes/site1/js/jquery-modal-video.min.js"></script>
 
-    <!-- <script src="../assets/js/script.js"></script> -->
-    <script src="https://cdn.kado.sg/themes/site1/js/main.js"></script>
-    <script>
-        $(".js-modal-btn").modalVideo();
-        // AOS.init({
-        //     easing: "ease-in-out", // default easing for AOS animations
-        //     once: false, // whether animation should happen only once - while scrolling down
-        //     duration: 600, // values from 0 to 3000, with step 50ms
-        //     offset: 60,
-        // });
-        // delegate all clicks on "a" tag (links)
-        $(document).on("click", "a", function () {
+<!-- <script src="../assets/js/script.js"></script> -->
+<script src="https://cdn.kado.sg/themes/site1/js/main.js"></script>
+<script>
+    $(".js-modal-btn").modalVideo();
+    // AOS.init({
+    //     easing: "ease-in-out", // default easing for AOS animations
+    //     once: false, // whether animation should happen only once - while scrolling down
+    //     duration: 600, // values from 0 to 3000, with step 50ms
+    //     offset: 60,
+    // });
+    // delegate all clicks on "a" tag (links)
+    $(document).on("click", "a", function () {
 
-            // get the href attribute
-            var newUrl = $(this).attr("href");
-            var target = $(this).attr("target");
+        // get the href attribute
+        var newUrl = $(this).attr("href");
+        var target = $(this).attr("target");
 
-            if (target === "_blank"){
-                return
-            }
+        if (target === "_blank"){
+            return
+        }
 
-            // veryfy if the new url exists or is a hash
-            if (!newUrl || newUrl[0] === "#" || newUrl[0] === "" || newUrl.includes("mailto:")) {
-                // set that hash
-                location.hash = newUrl;
-                return;
-            }
+        // veryfy if the new url exists or is a hash
+        if (!newUrl || newUrl[0] === "#" || newUrl[0] === "" || newUrl.includes("mailto:")) {
+            // set that hash
+            location.hash = newUrl;
+            return;
+        }
 
-            // now, fadeout the html (whole page)
-            $("html").fadeOut(function () {
-                // when the animation is complete, set the new location
-                location = newUrl;
-            });
-
-            // prevent the default browser behavior.
-            return false;
-        });
-    </script>
-    <script>
-        // ============================ 3d plugin hover effect
-        $(".3d-wrap").hover3d({
-            selector: ".3d-hover",
-            perspective: 2000,
-            sensitivity: 35,
+        // now, fadeout the html (whole page)
+        $("html").fadeOut(function () {
+            // when the animation is complete, set the new location
+            location = newUrl;
         });
 
-        setTimeout(function () {
-            $("body").addClass("loaded_page");
-        }, 2500);
-    </script>
-    <script>
-        let path = window.location.href.split('?')[0]; //
+        // prevent the default browser behavior.
+        return false;
+    });
+</script>
+<script>
+    // ============================ 3d plugin hover effect
+    $(".3d-wrap").hover3d({
+        selector: ".3d-hover",
+        perspective: 2000,
+        sensitivity: 35,
+    });
 
-        $('.navbar-nav li').each(function() {
-            let link = $(this).find("a")[0];
-            console.log(link.href)
-            if (link.href === path) {
-                $(link).addClass('active');
-            }
-        });
-    </script>
+    setTimeout(function () {
+        $("body").addClass("loaded_page");
+    }, 1500);
+</script>
+<script>
+    let path = window.location.href.split('?')[0]; //
+
+    $('.navbar-nav li').each(function() {
+        let link = $(this).find("a")[0];
+        console.log(link.href)
+        if (link.href === path) {
+            $(link).addClass('active');
+        }
+    });
+
+
+    setTimeout(function (){
+        $('.toast').toast('show');
+    }, 500);
+
+    setTimeout(function (){
+        $('.notification').remove();
+    }, 4700);
+
+</script>
 {% block extrascripts %}
 {% endblock %}
 </body>

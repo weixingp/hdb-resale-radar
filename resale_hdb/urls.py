@@ -28,14 +28,16 @@ urlpatterns = [
     path('radar/', views.radar_view),
     path('town/<str:slug>', views.summary_view),
     path('price-prediction/', views.price_prediction_view),
-    path('account/setup', views.account_setup_view)
+    path('account/setup/', views.account_setup_view),
+    path('dashboard/', views.dashboard_view)
 ]
 
 api = [
     path('map/markers', views.map_markers_json),
     path('api/location-autocomplete', views.location_auto_complete_json),
     path('api/hdb-stats', views.StatsAPI.as_view()),
-    path('api/price-prediction', views.PricePredictionAPI.as_view())
+    path('api/price-prediction', views.PricePredictionAPI.as_view()),
+    path('api/update-fav-town', views.TownFavAPI.as_view())
 ]
 
 urlpatterns += api

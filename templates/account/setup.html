@@ -31,10 +31,6 @@
                 </div>
 
                 <div class="col-12">
-                    <form method="post" id="skip-form">
-                        {% csrf_token %}
-                        <input type="hidden" name="skip" value="1">
-                    </form>
                     <form method="post" id="main-form">
                         {% csrf_token %}
                         <input type="hidden" name="skip" value="0">
@@ -67,8 +63,7 @@
                         </div>
                         <div class="row text-center mt-4 justify-content-center">
                             <div class="col">
-                                <button type="submit" class="btn btn-primary btn-lg" id="submit">Submit</button>
-                                <button type="button" class="btn btn-dark btn-lg" onclick="$('skip-form').submit()">Skip</button>
+                                <button type="submit" class="btn btn-primary btn-lg" id="submit" onclick="$(this).prop('disabled', true)">Submit</button>
                             </div>
 
                         </div>

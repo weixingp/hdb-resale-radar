@@ -110,8 +110,8 @@ class Profile(models.Model):
 
 
 class FavouriteTown(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     town = models.ForeignKey(Town, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('profile', 'town')
+        unique_together = ('user', 'town')

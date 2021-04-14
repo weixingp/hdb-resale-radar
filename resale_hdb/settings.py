@@ -101,6 +101,15 @@ TEMPLATES = [
     },
 ]
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache',
+    }
+}
+
+DEFAULT_CACHE_TIME = 24 * 60 * 60  # 1 day
+
 WSGI_APPLICATION = 'resale_hdb.wsgi.application'
 
 # Database
@@ -153,6 +162,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 LOGIN_REDIRECT_URL = "/dashboard/"
 # ACCOUNT_LOGOUT_REDIRECT_URL = "/account/login/"
 ACCOUNT_LOGOUT_ON_GET = True  # Unsafe, but for this simple app, it's good enough.
+ACCOUNT_EMAIL_VERIFICATION = None
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

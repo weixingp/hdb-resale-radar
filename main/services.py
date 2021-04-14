@@ -1,15 +1,29 @@
 from math import floor
 
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.timezone import localtime
+from rest_framework.exceptions import ValidationError
+
 from main.models import Room, Town, FlatType, FavouriteTown, Profile
+from main.utils.util import get_median
+from resale_hdb.settings import DEFAULT_CACHE_TIME
 
 
 def calc_resale_price_rank(town):
-    towns = Town.objects.all().order_by("-median_price")
-    index = towns.index(town)
-    return index + 1
+    cache_key = f"price_rank_{town.id}"
+    cache_value = cache.get(cache_key)
+    if cache_value is None:
+        towns = Town.objects.all()
+        index = list(towns.order_by("-median_price")).index(town)
+        cache.set(cache_key, (towns, index), DEFAULT_CACHE_TIME)
+    else:
+        towns, index = cache_value
+
+    return index + 1, len(towns)
 
 
-def get_4_room_median_for_all_towns():
+def update_4_room_median_for_all_towns():
     towns = Town.objects.all()
     flat_type = FlatType.objects.get(name="4 ROOM")
     for town in towns:
@@ -19,16 +33,45 @@ def get_4_room_median_for_all_towns():
             .order_by("resale_prices")
             .values_list("resale_prices", flat=True)
         )
-        data_size = len(data_set)
-        if data_size % 2 == 0:
-            # Even
-            mid = data_size/2 - 1
-        else:
-            mid = floor(data_size/2)
-
-        median = data_set[int(mid)]
+        median = get_median(data_set)
         town.median_price = median
         town.save()
+
+
+def get_4_room_median_for_town(town, year=None, month=None):
+    cache_key = f"median_{town.id}_{year}_{month}"
+
+    cache_value = cache.get(cache_key)
+    if cache_value is not None:
+        median = cache_value
+    else:
+        flat_type = FlatType.objects.get(name="4 ROOM")
+        if year and month:
+            data_set = (
+                Room.objects
+                .filter(
+                    block_address__town_name=town,
+                    flat_type=flat_type,
+                    resale_date__year=year,
+                    resale_date__month=month
+                )
+                .order_by("resale_prices")
+                .values_list("resale_prices", flat=True)
+            )
+        else:
+            data_set = (
+                Room.objects
+                .filter(
+                    block_address__town_name=town,
+                    flat_type=flat_type,
+                )
+                .order_by("resale_prices")
+                .values_list("resale_prices", flat=True)
+            )
+
+        median = get_median(data_set)
+        cache.set(cache_key, median, DEFAULT_CACHE_TIME)
+    return median
 
 
 def get_hdb_stats(town_id):
@@ -70,20 +113,20 @@ def get_all_towns():
     return towns
 
 
-def update_profile_town_favourite(profile, town, remove=False):
+def update_profile_town_favourite(user, town, remove=False):
 
     if not remove:
         FavouriteTown.objects.get_or_create(
-            profile=profile,
+            user=user,
             town=town,
         )
     else:
         obj = FavouriteTown.objects.filter(
-            profile=profile,
+            user=user,
             town=town
         )
         if obj:
-            obj[0].remove()
+            obj[0].delete()
 
 
 def create_user_profile(user):
@@ -92,3 +135,49 @@ def create_user_profile(user):
     )
 
     return profile
+
+
+def get_fav_towns(user):
+    fav_towns = FavouriteTown.objects.filter(
+        user=user
+    )
+
+    towns = []
+    for item in fav_towns:
+        towns.append(item.town)
+
+    return towns
+
+
+def update_fav_town(user, town_id, is_unfav):
+
+    try:
+        town = Town.objects.get(id=town_id)
+    except ObjectDoesNotExist:
+        raise ValidationError(detail="town does not exist")
+
+    if is_unfav:
+        fav_town = FavouriteTown.objects.filter(
+            user=user,
+            town=town
+        )
+        if fav_town:
+            fav_town = fav_town[0]
+            fav_town.delete()
+    else:
+        FavouriteTown.objects.get_or_create(
+            town=town,
+            user=user
+        )
+
+
+def check_is_fav(user, town):
+    fav_town = FavouriteTown.objects.filter(
+        user=user,
+        town=town
+    )
+
+    if not fav_town:
+        return False
+    else:
+        return True

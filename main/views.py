@@ -1,19 +1,34 @@
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
 
 # Create your views here.
 from django.shortcuts import redirect
 from django.template import loader
+from django.utils.decorators import method_decorator
+from django.utils.timezone import localtime
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from main.APIManager import APIManager
-from main.forms import PricePredictionForm
+from main.forms import PricePredictionForm, FavTownForm
 from main.models import Town, BlockAddress, NewsArticle, Room, FlatType, LevelType
-from main.services import get_hdb_stats, get_all_towns, update_profile_town_favourite, create_user_profile
+from main.services import get_hdb_stats, get_all_towns, update_profile_town_favourite, create_user_profile, \
+    get_fav_towns, calc_resale_price_rank, get_4_room_median_for_town, update_fav_town, check_is_fav
 from main.utils.PricePredictionModel import PricePredictionModel
 from main.utils.util import get_news_for_display, get_random_latest_flats, get_storey_range
+
+
+def profile_setup_required(function):
+    def _function(request, *args, **kwargs):
+        if not hasattr(request.user, 'profile'):
+            return redirect("/account/setup/")
+
+        return function(request, *args, **kwargs)
+
+    return _function
 
 
 def test(request):
@@ -72,9 +87,17 @@ def home_page_view(request):
 
 def radar_view(request):
     template = loader.get_template('new/radar.html')
-    towns = Town.objects.all()
+
+    towns = get_all_towns()
+    for town in towns:
+        rank, total = calc_resale_price_rank(town)
+        four_room_median = get_4_room_median_for_town(town)
+        town.rank = rank
+        town.median = int(four_room_median)
+
     context = {
         "towns": towns,
+        "total_towns": len(towns),
     }
 
     response = HttpResponse(template.render(context, request))
@@ -100,11 +123,18 @@ def summary_view(request, slug):
     town_name = slug.replace("-", " ").upper()
     try:
         town = Town.objects.get(name=town_name)
+        rank, total_towns = calc_resale_price_rank(town)
+        is_fav = False
+        if request.user.is_authenticated:
+            is_fav = check_is_fav(user=request.user, town=town)
     except ObjectDoesNotExist:
         return redirect("/404")
 
     context = {
-        "town": town
+        "town": town,
+        "rank": rank,
+        "total_towns": total_towns,
+        "is_fav": is_fav,
     }
 
     response = HttpResponse(template.render(context, request))
@@ -197,13 +227,11 @@ def account_setup_view(request):
         profile = create_user_profile(user)
         profile.has_updated_profile = True
         profile.save()
-        skip = request.POST.get('skip')
-        if skip != "1":
-            for town in towns:
-                select = request.POST.get(f'town-{town.id}')
-                if select is not None:
-                    if select == '1':
-                        update_profile_town_favourite(profile, town)
+        for town in towns:
+            select = request.POST.get(f'town-{town.id}')
+            if select is not None:
+                if select == '1':
+                    update_profile_town_favourite(user, town)
         return redirect("/dashboard")
     else:
         context = {
@@ -211,3 +239,34 @@ def account_setup_view(request):
         }
         response = HttpResponse(template.render(context, request))
         return response
+
+
+@login_required
+@profile_setup_required
+def dashboard_view(request):
+    template = loader.get_template("new/dashboard.html")
+    user = request.user
+    fav_towns = get_fav_towns(user)
+
+    context = {
+        "favourite_towns": fav_towns,
+    }
+
+    response = HttpResponse(template.render(context, request))
+    return response
+
+class TownFavAPI(APIView):
+
+    @method_decorator(login_required)
+    def post(self, request):
+        form = FavTownForm(request.data)
+        user = request.user
+        if form.is_valid():
+            town_id = form.cleaned_data['town_id']
+            is_unfav = form.cleaned_data['is_unfav']
+            update_fav_town(user=user, town_id=town_id, is_unfav=is_unfav)
+        else:
+            print(form.errors)
+            raise ValidationError(detail="Invalid data")
+
+        return Response({"success": True})

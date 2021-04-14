@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
 from main.APIManager import APIManager
-from main.services import get_4_room_median_for_all_towns
+from main.services import update_4_room_median_for_all_towns
 
 
 class Command(BaseCommand):
@@ -24,4 +24,4 @@ class Command(BaseCommand):
             api.load_data(order="desc")
             api.import_to_database(update=True, print_output=True)
 
-        get_4_room_median_for_all_towns()
+        update_4_room_median_for_all_towns()

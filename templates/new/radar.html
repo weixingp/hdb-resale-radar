@@ -40,7 +40,7 @@
                                 <span class="input-group-addon ml-1" style="font-size: 20px; margin-top: 0.2em;">
                                     <i class="ri-search-line"></i>
                                 </span>
-                                <input type="text" class="form-control" style="margin-top: 0.2em;" id="location_search" name="location_search" placeholder="Enter a neighbourhood / location name">
+                                <input type="text" class="form-control" style="margin-top: 0.2em;" id="location_search" name="location_search" placeholder="Enter a neighbourhood / location name" autocomplete="off">
                                 <span class="input-group-addon mr-1" style="font-size: 20px; margin-top: 0.2em;" id="search-clear">
                                     <i class="ri-close-line"></i>
                                 </span>
@@ -54,9 +54,11 @@
                             <div class="card shadow mt-3">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ item.name }}</h5>
+                                    <h6 class="text-primary">Resale price ranked #{{ item.rank }} out of {{ total_towns }}</h6>
+                                    <p>4-Room Median: ${{ item.median }}</p>
                                     <div class="row card-text">
                                         <div class="col-4">
-                                            <p class="card-text">1-Room Avg: $10000</p>
+                                            <p class="card-text">4-Room Medium: {{ item.median }}</p>
                                         </div>
                                         <div class="col-4">
                                             <p class="card-text">2-Room Avg: $10000</p>
