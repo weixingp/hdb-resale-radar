@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+
+import joblib
 from dotenv import load_dotenv
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -51,7 +53,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1", "radar.kado.sg", "cz2006.kado.sg"]
 
 LOGIN_URL = "/account/login/"
 # Application definition
@@ -182,3 +184,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = str(BASE_DIR) + '/static/'
+
+# load the ML model into mem
+try:
+    MLMODEL = [
+        joblib.load(str(BASE_DIR) + "/Random_Forest.sav"),
+        joblib.load(str(BASE_DIR) + "/Trained_Label_Encoder.joblib"),
+        joblib.load(str(BASE_DIR) + "/Trained_Ordinal_Encoder.joblib"),
+    ]
+except Exception:
+    MLMODEL = None
+

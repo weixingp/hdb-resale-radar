@@ -13,17 +13,19 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.ensemble import RandomForestClassifier
 
+from resale_hdb.settings import MLMODEL
+
 
 class PricePredictionModel:
 
     def __init__(self):
 
-        try:
+        if MLMODEL is not None:
             print("Loading from saved model...")
-            self.__random_forest = joblib.load("Random_Forest.sav")
+            self.__random_forest = MLMODEL[0]
             self.__le = joblib.load("Trained_Label_Encoder.joblib")
             self.__oe = joblib.load("Trained_Ordinal_Encoder.joblib")
-        except OSError as e:
+        else:
             print("Model not found, implementing model...")
 
             # Retrieval of data is less than 1 second
