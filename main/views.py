@@ -17,9 +17,10 @@ from main.APIManager import APIManager
 from main.forms import PricePredictionForm, FavTownForm
 from main.models import Town, BlockAddress, NewsArticle, Room, FlatType, LevelType
 from main.services import get_hdb_stats, get_all_towns, update_profile_town_favourite, create_user_profile, \
-    get_fav_towns, calc_resale_price_rank, get_4_room_median_for_town, update_fav_town, check_is_fav
+    get_fav_towns, calc_resale_price_rank, get_4_room_median_for_town, update_fav_town, check_is_fav, \
+    get_news_for_display, get_random_latest_flats
 from main.utils.PricePredictionModel import PricePredictionModel
-from main.utils.util import get_news_for_display, get_random_latest_flats, get_storey_range
+from main.utils.util import get_storey_range
 
 
 def profile_setup_required(function):
