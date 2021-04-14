@@ -23,8 +23,8 @@ class PricePredictionModel:
         if MLMODEL is not None:
             print("Loading from saved model...")
             self.__random_forest = MLMODEL[0]
-            self.__le = joblib.load("Trained_Label_Encoder.joblib")
-            self.__oe = joblib.load("Trained_Ordinal_Encoder.joblib")
+            self.__le = MLMODEL[1]
+            self.__oe = MLMODEL[2]
         else:
             print("Model not found, implementing model...")
 
