@@ -186,6 +186,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = str(BASE_DIR) + '/static/'
 
 # load the ML model into mem
+# Make sure you have enough system memory ~4GB is safe.
 try:
     MLMODEL = [
         joblib.load(str(BASE_DIR) + "/Random_Forest.sav"),

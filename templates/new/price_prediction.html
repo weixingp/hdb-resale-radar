@@ -103,8 +103,8 @@
 {% block extrascripts %}
     <script>
         $("#prediction-form").submit(function(e) {
-            $("predict-btn").prop("disabled", true);
             e.preventDefault();
+            $("#predict-btn").prop("disabled", true);
             const $result = $("#prediction-result");
             $result.html("<p class='text-white'>Running prediction, please wait... (This can take up to one minute)</p>")
             $.ajax({
@@ -113,6 +113,7 @@
                 data: $("#prediction-form").serialize(),
                 dataType: 'json',
                 success: function (data) {
+                    $("#predict-btn").prop("disabled", false);
                     if (data.success) {
                         $result.html("<h3 class='text-white mt-2'>$" + data.result +"</h3>")
                     } else {
