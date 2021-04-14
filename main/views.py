@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
@@ -127,6 +128,16 @@ def summary_view(request, slug):
         is_fav = False
         if request.user.is_authenticated:
             is_fav = check_is_fav(user=request.user, town=town)
+
+        # Get historical median
+        n = 0
+        data = []
+        while n < 6:
+            dt = localtime() - relativedelta(months=n)
+            median = get_4_room_median_for_town(town=town, year=dt.year, month=dt.month)
+            n += 1
+            data.append(median)
+
     except ObjectDoesNotExist:
         return redirect("/404")
 
@@ -141,6 +152,7 @@ def summary_view(request, slug):
     return response
 
 
+@login_required
 def price_prediction_view(request):
     template = loader.get_template('new/price_prediction.html')
     flat_types = FlatType.objects.all()
@@ -254,6 +266,7 @@ def dashboard_view(request):
 
     response = HttpResponse(template.render(context, request))
     return response
+
 
 class TownFavAPI(APIView):
 
