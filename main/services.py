@@ -1,11 +1,13 @@
+import random
 from math import floor
 
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Max
 from django.utils.timezone import localtime
 from rest_framework.exceptions import ValidationError
 
-from main.models import Room, Town, FlatType, FavouriteTown, Profile
+from main.models import Room, Town, FlatType, FavouriteTown, Profile, NewsArticle
 from main.utils.util import get_median
 from resale_hdb.settings import DEFAULT_CACHE_TIME
 
