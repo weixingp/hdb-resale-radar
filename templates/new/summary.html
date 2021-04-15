@@ -369,6 +369,7 @@
             let myChart = new Chart(ctx, {
                 type: 'line',
                 data: lineChartData,
+                spanGaps: true,
                 options: {
                     responsive: true,
                     plugins: {
@@ -397,7 +398,7 @@
                                 text: 'Price ( Thousands )'
                             },
                         }
-                    }
+                    },
                 }
             });
             return myChart;

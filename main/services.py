@@ -69,9 +69,10 @@ def get_4_room_median_for_town(town, year=None, month=None):
             )
         if rooms:
             data_set = rooms.order_by("resale_prices").values_list("resale_prices", flat=True)
+            median = get_median(data_set)
         else:
-            data_set = [0]
-        median = get_median(data_set)
+            median = None
+
         cache.set(cache_key, median, DEFAULT_CACHE_TIME)
     return median
 
@@ -251,7 +252,11 @@ def get_n_mths_median(town, n=12):
         dt = localtime() - relativedelta(months=n)
         median = get_4_room_median_for_town(town=town, year=dt.year, month=dt.month)
         data['labels'].append(dt.strftime("%b %Y"))
-        data['data'].append(median/1000)
+        if median is not None:
+            data['data'].append(median/1000)
+        else:
+            data['data'].append(median)
+
         n -= 1
 
     return data
