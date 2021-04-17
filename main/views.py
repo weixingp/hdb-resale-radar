@@ -25,6 +25,13 @@ from main.utils.util import get_storey_range
 
 def profile_setup_required(function):
     def _function(request, *args, **kwargs):
+        """
+        Check that user has a profile
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         if not hasattr(request.user, 'profile'):
             return redirect("/account/setup/")
 
@@ -33,15 +40,12 @@ def profile_setup_required(function):
     return _function
 
 
-def test(request):
-    api = APIManager()
-    api.load_data()
-    api.import_to_database()
-
-    return JsonResponse({"success": True})
-
-
 def map_markers_json(request):
+    """
+    Get all map markers for google map
+    :param request: request Object
+    :return: HTTPResponse Object
+    """
     towns = Town.objects.all()
 
     res = []
@@ -57,15 +61,12 @@ def map_markers_json(request):
     return JsonResponse(res, safe=False)
 
 
-def map(request):
-    template = loader.get_template('map/google_map_with_markers.html')
-    context = {
-    }
-    response = HttpResponse(template.render(context, request))
-    return response
-
-
 def home_page_view(request):
+    """
+    Renders home page
+    :param request: request Object
+    :return: HTTPResponse Object
+    """
     template = loader.get_template('new/index.html')
 
     # Crawled News
